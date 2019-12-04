@@ -35,7 +35,7 @@
       <!-- the template -->
       <div class="block form-group">
         <div class="mb">
-          <b><i class="far fa-file"></i> Template file !</b>
+          <b><i class="far fa-file"></i> Template file</b>
         </div>
 
         <div class="mb" v-if="template">
@@ -141,8 +141,9 @@
           startPicking: function() {
             this.picking = setInterval(function() {
               google.script.run.withSuccessHandler(updatePicker).getFiles();
-            }, 1000);
+            }, 100);
           },
+
           stopPicking: function() {
             clearInterval(this.picking);
           },
