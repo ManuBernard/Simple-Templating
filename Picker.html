@@ -75,6 +75,7 @@
           google.script.host.close();
         } else if (action == google.picker.Action.CANCEL) {
           google.script.host.close();
+          oogle.script.run.onPickerClosed();
         }
       }
 

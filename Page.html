@@ -87,7 +87,6 @@
       <hr />
 
       <!-- submit button -->
-
       <div v-if="loading">
         Loading...
       </div>
@@ -109,13 +108,16 @@
           folder: null,
           name: null,
           loading: false,
+          picking: null,
           lastfile: null
         },
         methods: {
           selectTemplate: function() {
+            this.startPicking();
             google.script.run.selectTemplate();
           },
           selectFolder: function() {
+            this.startPicking();
             google.script.run.selectFolder();
           },
           saveName: function() {
@@ -136,6 +138,14 @@
               this.name = data.name;
             }
           },
+          startPicking: function() {
+            this.picking = setInterval(function() {
+              google.script.run.withSuccessHandler(updatePicker).getFiles();
+            }, 1000);
+          },
+          stopPicking: function() {
+            clearInterval(this.picking);
+          },
           updateFiles: function(data) {
             if (data) {
               var template = JSON.parse(data.template);
@@ -148,9 +158,12 @@
               if (folder) {
                 this.folder = folder;
               }
+
+              this.stopPicking();
             }
           }
-        }
+        },
+        created: function() {}
       });
 
       function generated(data) {
@@ -161,15 +174,12 @@
         app.updateData(data);
       }
 
-      function updateFiles(data) {
+      function updatePicker(data) {
         app.updateFiles(data);
       }
 
+      // Fet DATA from cache
       google.script.run.withSuccessHandler(updateData).getData();
-
-      window.setInterval(function() {
-        google.script.run.withSuccessHandler(updateFiles).getFiles();
-      }, 1000);
     </script>
   </body>
 </html>

@@ -56,18 +56,28 @@ function onPickerPicked(file) {
     CacheService.getDocumentCache().put("folder", file, 1500000000);
   }
 
+  CacheService.getDocumentCache().put("picker_mode", "done", 1500000000);
+}
+
+// Call pack on picker is picked, save the file in cache for reuse in checkPickerUpdate
+function onPickerClosed() {
   // CacheService.getDocumentCache().remove("picker_mode");
 }
 
 // Called from page, check if the picker has something to return
 function getFiles() {
-  var template = CacheService.getDocumentCache().get("template");
-  var folder = CacheService.getDocumentCache().get("folder");
+  var picker_mode = CacheService.getDocumentCache().get("picker_mode");
+  var data = null;
 
-  var data = {
-    template: template,
-    folder: folder
-  };
+  if (picker_mode == "done") {
+    var template = CacheService.getDocumentCache().get("template");
+    var folder = CacheService.getDocumentCache().get("folder");
+
+    data = {
+      template: template,
+      folder: folder
+    };
+  }
 
   return data;
 }
