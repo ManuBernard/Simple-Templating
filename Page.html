@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script
+      src="https://kit.fontawesome.com/53cb3b2289.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      .mb {
+        margin-bottom: 15px;
+      }
+
+      hr {
+        margin: 15px 0px;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://ssl.gstatic.com/docs/script/css/add-ons1.css"
+    />
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <div class="sidebar" id="app">
+      <!-- the template -->
+      <div class="block form-group">
+        <div class="mb">
+          <b><i class="far fa-file"></i> Template file !</b>
+        </div>
+
+        <div class="mb" v-if="template">
+          <a :href="template.doc.url" target="_blank">
+            <i class="fas fa-external-link-alt"></i> {{template.doc.name}}
+          </a>
+        </div>
+
+        <button @click="selectTemplate">
+          Select a template
+        </button>
+      </div>
+
+      <hr />
+
+      <!-- the folder -->
+      <div class="block form-group">
+        <div class="mb">
+          <b><i class="far fa-folder"></i> Output directory</b>
+        </div>
+
+        <div class="mb" v-if="folder">
+          <a :href="folder.doc.url" target="_blank">
+            <i class="fas fa-external-link-alt"></i> {{folder.doc.name}}
+          </a>
+        </div>
+
+        <button @click="selectFolder">
+          Select a folder
+        </button>
+      </div>
+
+      <hr />
+
+      <!-- the name -->
+      <div class="block form-group">
+        <div class="mb">
+          <b>Generated file name</b>
+        </div>
+
+        <input
+          class="form-control"
+          type="text"
+          @keyup="saveName"
+          v-model="name"
+        />
+      </div>
+
+      <hr />
+
+      <!-- submit button -->
+
+      <div v-if="loading">
+        Loading...
+      </div>
+      <div v-else>
+        <div v-if="lastfile">
+          <a :href="lastfile" target="_blank">Open freshly generated deck!</a>
+        </div>
+        <button @click.prevent="generate" class="action">
+          Generate File <i class="fas fa-magic"></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: "#app",
+        data: {
+          template: null,
+          folder: null,
+          name: null,
+          loading: false,
+          lastfile: null
+        },
+        methods: {
+          selectTemplate: function() {
+            google.script.run.selectTemplate();
+          },
+          selectFolder: function() {
+            google.script.run.selectFolder();
+          },
+          saveName: function() {
+            google.script.run.saveName(this.name);
+          },
+          generate: function() {
+            this.loading = true;
+            google.script.run.withSuccessHandler(generated).generate();
+          },
+          generated: function(data) {
+            this.loading = false;
+            this.lastfile = "https://docs.google.com/presentation/d/" + data;
+          },
+          updateData: function(data) {
+            if (data) {
+              this.template = JSON.parse(data.template);
+              this.folder = JSON.parse(data.folder);
+              this.name = data.name;
+            }
+          },
+          updateFiles: function(data) {
+            if (data) {
+              var template = JSON.parse(data.template);
+              var folder = JSON.parse(data.folder);
+
+              if (template) {
+                this.template = template;
+              }
+
+              if (folder) {
+                this.folder = folder;
+              }
+            }
+          }
+        }
+      });
+
+      function generated(data) {
+        app.generated(data);
+      }
+
+      function updateData(data) {
+        app.updateData(data);
+      }
+
+      function updateFiles(data) {
+        app.updateFiles(data);
+      }
+
+      google.script.run.withSuccessHandler(updateData).getData();
+
+      window.setInterval(function() {
+        google.script.run.withSuccessHandler(updateFiles).getFiles();
+      }, 1000);
+    </script>
+  </body>
+</html>
