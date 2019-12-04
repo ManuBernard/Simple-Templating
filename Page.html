@@ -141,13 +141,14 @@
           startPicking: function() {
             this.picking = setInterval(function() {
               google.script.run.withSuccessHandler(updatePicker).getFiles();
-            }, 100);
+            }, 1000);
           },
 
           stopPicking: function() {
             clearInterval(this.picking);
           },
           updateFiles: function(data) {
+            console.log(data);
             if (data) {
               var template = JSON.parse(data.template);
               var folder = JSON.parse(data.folder);
