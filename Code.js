@@ -28,20 +28,6 @@ function generate() {
   var folderId = JSON.parse(CacheService.getDocumentCache().get("folder")).id;
   var dataBaseId = SpreadsheetApp.getActive().getId();
   var name = CacheService.getDocumentCache().get("name");
-  var mode = CacheService.getDocumentCache().get("mode");
 
-  generate_cards(templateId, folderId, dataBaseId, name, mode);
-}
-
-function generate_cards(templateId, folderId, dataBaseId, name, mode) {
-  // 1 : récupération de la liste des cartes dans la sheet
-  var cards = getCards(dataBaseId);
-
-  // 2 : on créé le fichier à partir du template souhaité, avec le nom paramétré
-  var presentation = createPresentation(templateId, name, folderId);
-
-  // 3 : on construit la liste des cartes
-  createCards(cards, presentation.id, mode);
-
-  return presentation.id;
+  return generate_cards(templateId, folderId, dataBaseId, name);
 }
