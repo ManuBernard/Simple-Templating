@@ -12,7 +12,7 @@ function selectFolder() {
 
 // Show file picker
 function showPicker() {
-  var html = HtmlService.createHtmlOutputFromFile("Picker.html")
+  var html = HtmlService.createHtmlOutputFromFile("views/Picker.html")
     .setWidth(600)
     .setHeight(425)
     .setSandboxMode(HtmlService.SandboxMode.IFRAME);
