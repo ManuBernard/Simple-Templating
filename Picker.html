@@ -1,96 +1,98 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
-  <script type="text/javascript">
-    var DIALOG_DIMENSIONS = {
-  width: 600,
-  height: 425
-};
-var pickerApiLoaded = false;
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
+    />
+    <script type="text/javascript">
+      var DIALOG_DIMENSIONS = {
+        width: 600,
+        height: 425
+      };
+      var pickerApiLoaded = false;
 
-function onApiLoad() {
-  gapi.load("picker", {
-    callback: function() {
-      pickerApiLoaded = true;
-    }
-  });
-  google.script.run
-    .withSuccessHandler(createPicker)
-    .withFailureHandler(showError)
-    .getOAuthToken();
-}
+      function onApiLoad() {
+        gapi.load("picker", {
+          callback: function() {
+            pickerApiLoaded = true;
+          }
+        });
+        google.script.run
+          .withSuccessHandler(createPicker)
+          .withFailureHandler(showError)
+          .getOAuthToken();
+      }
 
-function createPicker(payLoad) {
-  var token = payLoad.token;
-  var mode = payLoad.mode;
+      function createPicker(payLoad) {
+        var token = payLoad.token;
+        var mode = payLoad.mode;
 
-  if (pickerApiLoaded && token) {
-    var docsView = new google.picker.DocsView();
-    if (mode == "template") {
-      docsView.setMimeTypes("application/vnd.google-apps.presentation");
-    } else if (mode == "folder") {
-      docsView
-        .setIncludeFolders(true)
-        .setMimeTypes("application/vnd.google-apps.folder")
-        .setSelectFolderEnabled(true);
-    }
+        if (pickerApiLoaded && token) {
+          var docsView = new google.picker.DocsView();
+          if (mode == "template") {
+            docsView.setMimeTypes("application/vnd.google-apps.presentation");
+          } else if (mode == "folder") {
+            docsView
+              .setIncludeFolders(true)
+              .setMimeTypes("application/vnd.google-apps.folder")
+              .setSelectFolderEnabled(true);
+          }
 
-    var picker = new google.picker.PickerBuilder()
-      .addView(docsView)
-      .enableFeature(google.picker.Feature.NAV_HIDDEN)
-      .hideTitleBar()
-      .setSize(DIALOG_DIMENSIONS.width - 2, DIALOG_DIMENSIONS.height - 2)
-      .setOAuthToken(token)
-      .setCallback(pickerCallback)
-      .setOrigin("https://docs.google.com")
-      .build();
+          var picker = new google.picker.PickerBuilder()
+            .addView(docsView)
+            .enableFeature(google.picker.Feature.NAV_HIDDEN)
+            .hideTitleBar()
+            .setSize(DIALOG_DIMENSIONS.width - 2, DIALOG_DIMENSIONS.height - 2)
+            .setOAuthToken(token)
+            .setCallback(pickerCallback)
+            .setOrigin("https://docs.google.com")
+            .build();
 
-    picker.setVisible(true);
-  } else {
-    showError("Unable to load the file picker.");
-  }
-}
+          picker.setVisible(true);
+        } else {
+          showError("Unable to load the file picker.");
+        }
+      }
 
-function pickerCallback(data) {
-  var action = data[google.picker.Response.ACTION];
-  if (action == google.picker.Action.PICKED) {
-    var doc = data[google.picker.Response.DOCUMENTS][0];
-    
-    console.log(doc);
-    var id = doc[google.picker.Document.ID];
-    
-    var payLoad = {
-    id: id,
-    doc: doc
-    };
-    
-    var payLoadJson = JSON.stringify(payLoad);
-    
-    console.log(payLoadJson);
-    
-    google.script.run.withSuccessHandler(insertTemplateId).onPickerPicked(payLoadJson);
-    google.script.host.close();
-  } else if (action == google.picker.Action.CANCEL) {
-    google.script.host.close();
-  }
-}
+      function pickerCallback(data) {
+        var action = data[google.picker.Response.ACTION];
+        if (action == google.picker.Action.PICKED) {
+          var doc = data[google.picker.Response.DOCUMENTS][0];
 
-function insertTemplateId(t) {
-  
-}
+          var id = doc[google.picker.Document.ID];
 
-function showError(message) {
-  document.getElementById("result").innerHTML = "Error: " + message;
-}
+          var payLoad = {
+            id: id,
+            doc: doc
+          };
 
-  </script>
-</head>
+          var payLoadJson = JSON.stringify(payLoad);
 
-<body>
+          google.script.run
+            .withSuccessHandler(insertTemplateId)
+            .onPickerPicked(payLoadJson);
+          google.script.host.close();
+        } else if (action == google.picker.Action.CANCEL) {
+          google.script.host.close();
+        }
+      }
+
+      function insertTemplateId(t) {}
+
+      function showError(message) {
+        document.getElementById("result").innerHTML = "Error: " + message;
+      }
+    </script>
+  </head>
+
+  <body>
     <div>
-        <p id='result'></p>
+      <p id="result"></p>
     </div>
-    <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-</body>
+    <script
+      type="text/javascript"
+      src="https://apis.google.com/js/api.js?onload=onApiLoad"
+    ></script>
+  </body>
 </html>
