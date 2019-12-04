@@ -64,18 +64,23 @@
 
           var payLoad = {
             id: id,
-            doc: doc
+            name: doc.name,
+            url: doc.url
           };
 
           var payLoadJson = JSON.stringify(payLoad);
-
+          console.log("close popup (picked)");
           google.script.run
             .withSuccessHandler(insertTemplateId)
             .onPickerPicked(payLoadJson);
-          google.script.host.close();
+          window.setTimeout(function() {
+            google.script.host.close();
+          }, 250);
         } else if (action == google.picker.Action.CANCEL) {
-          google.script.host.close();
-          oogle.script.run.onPickerClosed();
+          google.script.run.onPickerClosed();
+          window.setTimeout(function() {
+            google.script.host.close();
+          }, 250);
         }
       }
 

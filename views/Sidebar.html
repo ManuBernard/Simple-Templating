@@ -3,10 +3,6 @@
   <head>
     <base target="_top" />
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script
-      src="https://kit.fontawesome.com/53cb3b2289.js"
-      crossorigin="anonymous"
-    ></script>
 
     <style>
       .mb {
@@ -39,8 +35,8 @@
         </div>
 
         <div class="mb" v-if="template">
-          <a :href="template.doc.url" target="_blank">
-            <i class="fas fa-external-link-alt"></i> {{template.doc.name}}
+          <a :href="template.url" target="_blank">
+            {{template.name}}
           </a>
         </div>
 
@@ -58,8 +54,8 @@
         </div>
 
         <div class="mb" v-if="folder">
-          <a :href="folder.doc.url" target="_blank">
-            <i class="fas fa-external-link-alt"></i> {{folder.doc.name}}
+          <a :href="folder.url" target="_blank">
+            {{folder.name}}
           </a>
         </div>
 
@@ -95,12 +91,14 @@
           <a :href="lastfile" target="_blank">Open freshly generated deck!</a>
         </div>
         <button @click.prevent="generate" class="action">
-          Generate File <i class="fas fa-magic"></i>
+          Generate File
         </button>
       </div>
     </div>
 
     <script>
+      var picking;
+
       var app = new Vue({
         el: "#app",
         data: {
@@ -139,13 +137,12 @@
             }
           },
           startPicking: function() {
-            this.picking = setInterval(function() {
+            picking = setInterval(function() {
               google.script.run.withSuccessHandler(updatePicker).getFiles();
-            }, 1000);
+            }, 100);
           },
-
           stopPicking: function() {
-            clearInterval(this.picking);
+            clearInterval(picking);
           },
           updateFiles: function(data) {
             if (data) {
@@ -160,7 +157,8 @@
                 this.folder = folder;
               }
 
-              this.stopPicking();
+              console.log("should stop refreshing");
+              clearInterval(picking);
             }
           }
         },

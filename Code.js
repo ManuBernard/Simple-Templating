@@ -18,16 +18,19 @@ function showSidebar() {
 
 // Save the output file name
 function saveName(name) {
-  CacheService.getDocumentCache().put("name", name, 1500000000);
+  var properties = PropertiesService.getScriptProperties();
+  properties.setProperty("name");
 }
 
 // Generate the cards (called from the sidebar)
 function generate() {
-  var templateId = JSON.parse(CacheService.getDocumentCache().get("template"))
-    .id;
-  var folderId = JSON.parse(CacheService.getDocumentCache().get("folder")).id;
+  var properties = PropertiesService.getScriptProperties();
+
+  var templateId = JSON.parse(properties.getProperty("template")).id;
+  var folderId = JSON.parse(properties.getProperty("folder")).id;
+  var name = properties.getProperty("name");
+
   var dataBaseId = SpreadsheetApp.getActive().getId();
-  var name = CacheService.getDocumentCache().get("name");
 
   return generate_cards(templateId, folderId, dataBaseId, name);
 }
