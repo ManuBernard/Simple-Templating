@@ -22,6 +22,30 @@ function saveName(name) {
   properties.setProperty("name");
 }
 
+// Called from page : open the picker in "template" mode
+function selectTemplate() {
+  var properties = PropertiesService.getScriptProperties();
+  properties.setProperty("picker_mode", "template");
+  showPicker();
+}
+
+function removeTemplate() {
+  var properties = PropertiesService.getScriptProperties();
+  properties.deleteProperty("template");
+}
+
+// Called from page : open the picker in "folder" mode
+function selectFolder() {
+  var properties = PropertiesService.getScriptProperties();
+  properties.setProperty("picker_mode", "folder");
+  showPicker();
+}
+
+function removeFolder() {
+  var properties = PropertiesService.getScriptProperties();
+  properties.deleteProperty("folder");
+}
+
 // Generate the cards (called from the sidebar)
 function generate() {
   var properties = PropertiesService.getScriptProperties();
@@ -29,7 +53,7 @@ function generate() {
   var templateId = JSON.parse(properties.getProperty("template")).id;
   var folderId = JSON.parse(properties.getProperty("folder")).id;
   var name = properties.getProperty("name");
-
+  name = name ? name : "SimpleTemplating Generated File";
   var dataBaseId = SpreadsheetApp.getActive().getId();
 
   return generate_cards(templateId, folderId, dataBaseId, name);

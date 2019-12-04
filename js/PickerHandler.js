@@ -1,17 +1,3 @@
-// Called from page : open the picker in "template" mode
-function selectTemplate() {
-  var properties = PropertiesService.getScriptProperties();
-  properties.setProperty("picker_mode", "template");
-  showPicker();
-}
-
-// Called from page : open the picker in "folder" mode
-function selectFolder() {
-  var properties = PropertiesService.getScriptProperties();
-  properties.setProperty("picker_mode", "folder");
-  showPicker();
-}
-
 // Show file picker
 function showPicker() {
   var properties = PropertiesService.getScriptProperties();
