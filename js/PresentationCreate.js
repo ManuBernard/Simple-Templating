@@ -1,4 +1,4 @@
-function createPresentation(templateId, name, folderId) {
+function presentationCreate(templateId, name, folderId) {
   var copyFile = {
     title: formatDate() + " " + name,
     parents: [{ id: folderId }]
@@ -6,8 +6,5 @@ function createPresentation(templateId, name, folderId) {
 
   copyFile = Drive.Files.copy(copyFile, templateId);
 
-  var presentationId = copyFile.id;
-
-  Logger.log("Created new presentation id: " + presentationId);
   return copyFile;
 }

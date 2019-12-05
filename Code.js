@@ -47,16 +47,26 @@ function removeFolder() {
   properties.deleteProperty("folder");
 }
 
-// Generate the cards (called from the sidebar)
+// Generate new file
 function generate(name) {
   var properties = PropertiesService.getScriptProperties();
 
+  // Get data from storage
   var templateId = JSON.parse(properties.getProperty("template")).id;
   var folderId = JSON.parse(properties.getProperty("folder")).id;
-
-  name = name ? name : DICTIONNARY("DEFAULT_EXPORTED_FILENAME");
-
   var dataBaseId = SpreadsheetApp.getActive().getId();
 
-  return generate_cards(templateId, folderId, dataBaseId, name);
+  // If no name provided, use default one
+  name = name ? name : DICTIONNARY("DEFAULT_EXPORTED_FILENAME");
+
+  // Get list of lines from sheet
+  var lines = linesGet(dataBaseId);
+
+  // Create new Slide file from template and place it in output folder
+  var presentation = presentationCreate(templateId, name, folderId);
+
+  // Create cards in presentation
+  cardsCreate(lines, presentation.id);
+
+  return presentation.id;
 }

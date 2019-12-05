@@ -1,61 +1,39 @@
-function createCards(cards, presentationId) {
+function cardsCreate(lines, presentationId) {
   var presentation = SlidesApp.openById(presentationId);
-  var slides = presentation.getSlides();
-  var templateSlidesCount = slides.length;
+  var models = presentation.getSlides();
+  var modelsCount = models.length;
   var properties = [];
 
-  var i = templateSlidesCount;
-  for (var propertyName in cards[0]) {
-    properties.push(propertyName);
+  // Construct list of property from line 1
+  for (var name in lines[0]) {
+    properties.push(name);
   }
 
   // Generate cards
-  cards.forEach(function(card) {
-    var cardTemplateRecto = card.template ? card.template - 1 : 0;
+  lines.forEach(function(line) {
+    var modelIDs = [];
 
-    var ns_recto = slides[cardTemplateRecto].duplicate();
-    ns_recto.move(presentation.getSlides().length);
-    i++;
+    if (line.st_model) {
+      modelIDs = line.st_model.split(",");
+    } else {
+      modelIDs.push(1);
+    }
 
-    // if (mode == "bothsides") {
-    //   var cardTemplateVerso = card.templateback ? card.templateback - 1 : 1;
+    modelIDs.forEach(function(modelId) {
+      // Remove 1 to template, so user ask for 1 and get 0. More friendly.
+      modelId = parseInt(modelId) - 1;
 
-    //   var ns_verso = slides[cardTemplateVerso].duplicate();
-    //   ns_verso.move(presentation.getSlides().length);
-    //   i++;
-    // }
+      // Create card from model
+      var card = models[modelId].duplicate();
+      card.move(presentation.getSlides().length);
 
-    // Replace texts
-    properties.forEach(function(property) {
-      if (property) {
-        try {
-          ns_recto.replaceAllText("{{" + property + "}}", card[property]);
-        } catch (error) {
-          console.error(error);
-        }
-
-        // if (mode == "bothsides") {
-        //   try {
-        //     ns_verso.replaceAllText("{{" + property + "}}", card[property]);
-        //   } catch (error) {
-        //     console.error(error);
-        //   }
-        // }
-      }
+      // Transform a model in a card passing dynamic data
+      modelToCard(card, line, properties);
     });
-
-    // Replace colors and images
-    var recto_elements = ns_recto.getPageElements();
-    parseImageAndColors(recto_elements, card);
-
-    // if (mode == "bothsides") {
-    //   var verso_elements = ns_verso.getPageElements();
-    //   parseImageAndColors(verso_elements, card);
-    // }
   });
 
   // Remove template slides
-  for (var i = 0; i < templateSlidesCount; i++) {
-    slides[i].remove();
+  for (var i = 0; i < modelsCount; i++) {
+    models[i].remove();
   }
 }

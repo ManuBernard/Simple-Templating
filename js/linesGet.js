@@ -1,8 +1,8 @@
-function getCards(dataBaseId) {
+function linesGet(dataBaseId) {
   var ss = SpreadsheetApp.openById(dataBaseId);
   var activeRange = ss.getDataRange().getDisplayValues();
 
-  var cards = getJsonArrayFromData(activeRange);
+  var lines = getJsonArrayFromData(activeRange);
 
-  return cards;
+  return lines;
 }
