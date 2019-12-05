@@ -75,12 +75,12 @@
             .onPickerPicked(payLoadJson);
           window.setTimeout(function() {
             google.script.host.close();
-          }, 250);
+          }, 500);
         } else if (action == google.picker.Action.CANCEL) {
           google.script.run.onPickerClosed();
           window.setTimeout(function() {
             google.script.host.close();
-          }, 250);
+          }, 500);
         }
       }
 
