@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top" />
+    <?!= include('views/sidebar/style'); ?>
+  </head>
+  <title>Hello world</title>
+  <body>
+    <div class="sidebar" id="app">
+      <!-- IS LOADING -->
+      <div v-if="loading">
+        <div class="showbox">
+          <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+              <circle
+                class="path"
+                cx="50"
+                cy="50"
+                r="20"
+                fill="none"
+                stroke-width="2"
+                stroke-miterlimit="10"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- IS LOADED -->
+      <div v-else>
+        <!-- Pick the template -->
+        <div class="block form-group">
+          <div>
+            <b>Template file</b>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div v-if="template">
+            <a :href="template.url" target="_blank">
+              {{template.name}}
+            </a>
+            <div class="spacer"></div>
+          </div>
+
+          <button @click="selectTemplate" v-if="template">
+            Change
+          </button>
+
+          <button class="action" @click="selectTemplate" v-else>
+            Select Template
+          </button>
+
+          <button @click="removeTemplate" v-if="template">
+            Remove
+          </button>
+        </div>
+
+        <hr />
+
+        <!-- Pick the folder -->
+        <div class="block form-group">
+          <div>
+            <b>Output folder</b>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div v-if="folder">
+            <a :href="folder.url" target="_blank">
+              {{folder.name}}
+            </a>
+            <div class="spacer"></div>
+          </div>
+
+          <div class="spacer"></div>
+
+          <button @click="selectFolder" v-if="folder">
+            Change
+          </button>
+
+          <button class="action" @click="selectFolder" v-else>
+            Select folder
+          </button>
+
+          <button @click="removeFolder" v-if="folder">
+            Remove
+          </button>
+        </div>
+
+        <hr />
+
+        <!-- Write the name -->
+        <div class="block form-group">
+          <div>
+            <b>Generated file name</b>
+          </div>
+
+          <div class="spacer"></div>
+
+          <input class="form-control" type="text" v-model="name" />
+        </div>
+
+        <hr />
+
+        <!-- Submit button -->
+        <div>
+          <button
+            @click.prevent="generate"
+            class="action"
+            :disabled="!template || !folder"
+          >
+            Generate File
+          </button>
+
+          <div class="spacer"></div>
+
+          <!-- Open file - After genreated file -->
+          <div v-if="lastfile" class="congratulation">
+            <b>Congratulations!</b>
+            <p>Your file has been successfully generated.</p>
+            <a class="button" :href="lastfile" target="_blank">Open File</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <?!= include('views/sidebar/script'); ?>
+  </body>
+</html>

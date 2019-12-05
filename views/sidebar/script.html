@@ -1,0 +1,87 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+  var app = new Vue({
+    el: "#app",
+    data: {
+      template: null,
+      folder: null,
+      name: null,
+      loading: true,
+      picking: null,
+      lastfile: null
+    },
+    methods: {
+      // Select or remove template file
+      selectTemplate: function() {
+        this.startPicking();
+        google.script.run.selectTemplate();
+      },
+      removeTemplate: function() {
+        this.template = null;
+        google.script.run.removeTemplate();
+      },
+
+      // Select or remove output folder
+      selectFolder: function() {
+        this.startPicking();
+        google.script.run.selectFolder();
+      },
+      removeFolder: function() {
+        this.folder = null;
+        google.script.run.removeFolder();
+      },
+
+      // Call server to start cards generation
+      generate: function() {
+        var app = this;
+        this.loading = true;
+        google.script.run
+          .withSuccessHandler(app.onGenerated)
+          .generate(this.name);
+      },
+
+      // Start and stop picking interval (will refresh untill server returns files)
+      startPicking: function() {
+        var app = this;
+
+        this.picking = setInterval(function() {
+          google.script.run.withSuccessHandler(app.onUpdatedFiles).getFiles();
+        }, 100);
+      },
+      stopPicking: function() {
+        clearInterval(this.picking);
+      },
+
+      // Callback after generation completed by server
+      onGenerated: function(data) {
+        this.loading = false;
+        this.lastfile = "https://docs.google.com/presentation/d/" + data;
+      },
+
+      // Callback after files picked in picker
+      onUpdatedFiles: function(data) {
+        if (data) {
+          var template = JSON.parse(data.template);
+          var folder = JSON.parse(data.folder);
+
+          if (template) {
+            this.template = template;
+          }
+
+          if (folder) {
+            this.folder = folder;
+          }
+          this.loading = false;
+          this.stopPicking();
+        }
+      }
+    },
+
+    // On mounted retrieve previously selected template and folder from cache
+    mounted: function() {
+      var app = this;
+      google.script.run.withSuccessHandler(app.onUpdatedFiles).getFiles();
+    }
+  });
+</script>
