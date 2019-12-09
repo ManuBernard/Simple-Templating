@@ -1,4 +1,4 @@
-// Project configuration
+// Project dictionnary
 function DICTIONNARY(key) {
   var texts = {
     SIDEBAR_TITLE: "Simple Templating",

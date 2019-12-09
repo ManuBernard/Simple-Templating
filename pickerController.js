@@ -2,7 +2,8 @@
 function showPicker() {
   var properties = PropertiesService.getScriptProperties();
 
-  var html = HtmlService.createHtmlOutputFromFile("views/Picker.html")
+  var html = HtmlService.createTemplateFromFile("views/picker/page.html")
+    .evaluate()
     .setWidth(600)
     .setHeight(425)
     .setSandboxMode(HtmlService.SandboxMode.IFRAME);
@@ -29,43 +30,6 @@ function onPickerPicked(file) {
 function onPickerClosed() {
   var properties = PropertiesService.getScriptProperties();
   properties.setProperty("picker_mode", "done");
-}
-
-// Called from page, check if the picker has something to return
-function getFiles() {
-  var properties = PropertiesService.getScriptProperties();
-
-  var picker_mode = properties.getProperty("picker_mode");
-  var data = null;
-
-  if (picker_mode == "done") {
-    var template = properties.getProperty("template");
-    var folder = properties.getProperty("folder");
-
-    data = {
-      template: template,
-      folder: folder
-    };
-  }
-
-  return data;
-}
-
-// Called from page, check if the picker has something to return
-function getData() {
-  var properties = PropertiesService.getScriptProperties();
-
-  var template = properties.getProperty("template");
-  var folder = properties.getProperty("folder");
-  var name = properties.getProperty("name");
-
-  var data = {
-    template: template,
-    folder: folder,
-    name: name
-  };
-
-  return data;
 }
 
 // Return token (for filepicker)

@@ -1,24 +1,30 @@
-// On document init add button to menu
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
+function getConfig() {
+  var data = {
+    files: getFiles(),
+    isPro: isProKey()
+  };
 
-  ui.createMenu("Simple Templating")
-    .addItem("Open Sidebar", "showSidebar")
-    .addToUi();
+  return data;
 }
 
-// Show sidebar
-function showSidebar() {
-  var sidebar_html = HtmlService.createTemplateFromFile("views/sidebar/page")
-    .evaluate()
-    .setTitle(DICTIONNARY("SIDEBAR_TITLE"));
+// Called from page, check if the picker has something to return
+function getFiles() {
+  var properties = PropertiesService.getScriptProperties();
 
-  SpreadsheetApp.getUi().showSidebar(sidebar_html);
-}
+  var picker_mode = properties.getProperty("picker_mode");
+  var data = null;
 
-// Include function for templating
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+  if (picker_mode == "done") {
+    var template = properties.getProperty("template");
+    var folder = properties.getProperty("folder");
+
+    data = {
+      template: template,
+      folder: folder
+    };
+  }
+
+  return data;
 }
 
 // Called from page : open the picker in "template" mode
@@ -69,4 +75,41 @@ function generate(name) {
   cardsCreate(lines, presentation.id);
 
   return presentation.id;
+}
+
+function submitProKey(key) {
+  var properties = PropertiesService.getScriptProperties();
+  properties.setProperty(CONFIG("PROPERTY_PROKEY"), key);
+
+  return isProKey();
+}
+
+function removeProKey() {
+  var properties = PropertiesService.getScriptProperties();
+  properties.deleteProperty(CONFIG("PROPERTY_PROKEY"));
+
+  return false;
+}
+
+function isProKey() {
+  var properties = PropertiesService.getScriptProperties();
+  var key = properties.getProperty(CONFIG("PROPERTY_PROKEY"));
+
+  var isPro = false;
+
+  if (key == "pompom") {
+    isPro = true;
+  }
+
+  return isPro;
+
+  // var query = '"Apps Script" stars:">=100"';
+  // var url =
+  //   "https://api.github.com/search/repositories" +
+  //   "?sort=stars" +
+  //   "&q=" +
+  //   encodeURIComponent(query);
+
+  // var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  // Logger.log(response);
 }

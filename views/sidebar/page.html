@@ -121,6 +121,58 @@
             <a class="button" :href="lastfile" target="_blank">Open File</a>
           </div>
         </div>
+
+        <!-- FREE PLAN -->
+        <div class="plan free-plan" v-if="plan == 'free'">
+          <h3>You are using a free plan</h3>
+          <p>Limitations:</p>
+          <ul>
+            <li>25 cards / generation</li>
+            <li>3 texts / card</li>
+            <li>1 image / card</li>
+            <li>1 color / card</li>
+            <li>1 model / row</li>
+          </ul>
+
+          <p>
+            Remove all limits with a pro plan.
+          </p>
+          <p>
+            <b
+              >For a few month, as Simple Templating is in BETA, Pro Plan is
+              free! Get it now without any payment information.</b
+            >
+          </p>
+          <button class="action" @click="goPro">Go Pro</button>
+
+          <hr />
+
+          <input
+            v-model="proKey"
+            type="text"
+            placeholder="Copypast your key here"
+          /><br /><br />
+          <button @click="submitProKey" class="action" :disabled="!proKey">
+            Validate Key
+          </button>
+        </div>
+
+        <!-- PRO PLAN -->
+        <div class="plan pro-plan" v-if="plan == 'pro'">
+          <h3>You are using a pro plan!</h3>
+          <p>
+            You benefit with unlimitaded cards generation, texts, images and
+            colors. Plus you can use pro feature like multiple model usage.
+          </p>
+          <button @click="removeProKey">Remove Key</button>
+        </div>
+
+        <!-- Errors -->
+        <div class="errors" v-if="errors.length">
+          <div class="error" v-for="error in errors">
+            {{error}}
+          </div>
+        </div>
       </div>
     </div>
 

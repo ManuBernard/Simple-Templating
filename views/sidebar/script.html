@@ -9,7 +9,10 @@
       name: null,
       loading: true,
       picking: null,
-      lastfile: null
+      lastfile: null,
+      proKey: null,
+      plan: "free",
+      errors: []
     },
     methods: {
       // Select or remove template file
@@ -72,16 +75,57 @@
           if (folder) {
             this.folder = folder;
           }
-          this.loading = false;
+
           this.stopPicking();
         }
+      },
+
+      // On submit proKey clicked button
+      submitProKey: function() {
+        google.script.run
+          .withSuccessHandler(app.onSubmittedProKey)
+          .submitProKey(this.proKey);
+      },
+
+      // On submit proKey clicked button
+      removeProKey: function() {
+        google.script.run.withSuccessHandler().removeProKey();
+        this.plan = "free";
+        this.handleErrors();
+      },
+
+      onSubmittedProKey: function(isPro) {
+        this.plan = isPro ? "pro" : "free";
+        if (!isPro && this.proKey) {
+          this.handleErrors(["Key is not valid"]);
+        }
+      },
+
+      handleErrors: function(errors) {
+        if (errors) {
+          this.errors = errors;
+        } else {
+          this.errors = [];
+        }
+      },
+
+      goPro: function() {},
+
+      // Called on mounted, get isPro and files from server
+      onConfig: function(data) {
+        if (data) {
+          this.onUpdatedFiles(data.files);
+          this.onSubmittedProKey(data.isPro);
+        }
+
+        this.loading = false;
       }
     },
 
-    // On mounted retrieve previously selected template and folder from cache
+    // On mounted retrieve previously selected template, folder from cache plus retrieve mode (pro or free)
     mounted: function() {
       var app = this;
-      google.script.run.withSuccessHandler(app.onUpdatedFiles).getFiles();
+      google.script.run.withSuccessHandler(app.onConfig).getConfig();
     }
   });
 </script>
