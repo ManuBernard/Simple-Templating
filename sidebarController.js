@@ -91,7 +91,7 @@ function removeProKey() {
   return false;
 }
 
-function isProKey() {
+function getPlan() {
   var properties = PropertiesService.getScriptProperties();
   var key = properties.getProperty(CONFIG("PROPERTY_PROKEY"));
 

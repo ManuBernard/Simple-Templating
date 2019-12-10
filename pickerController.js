@@ -13,7 +13,7 @@ function showPicker() {
   );
 }
 
-// Call pack on picker is picked, save the file in cache for reuse in checkPickerUpdate
+// Callback on picker is picked, save the file in cache for reuse in checkPickerUpdate
 function onPickerPicked(file) {
   var properties = PropertiesService.getScriptProperties();
 
@@ -26,7 +26,7 @@ function onPickerPicked(file) {
   properties.setProperty("picker_mode", "done");
 }
 
-// Call pack on picker is picked, save the file in cache for reuse in checkPickerUpdate
+// Callback on picker is closed
 function onPickerClosed() {
   var properties = PropertiesService.getScriptProperties();
   properties.setProperty("picker_mode", "done");
