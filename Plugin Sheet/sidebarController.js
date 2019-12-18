@@ -1,7 +1,7 @@
 function getConfig() {
   var data = {
     files: getFiles(),
-    isPro: isProKey()
+    isPro: isPro()
   };
 
   return data;
@@ -81,7 +81,7 @@ function submitProKey(key) {
   var properties = PropertiesService.getScriptProperties();
   properties.setProperty(CONFIG("PROPERTY_PROKEY"), key);
 
-  return isProKey();
+  return isPro();
 }
 
 function removeProKey() {
@@ -91,13 +91,13 @@ function removeProKey() {
   return false;
 }
 
-function getPlan() {
+function isPro() {
   var properties = PropertiesService.getScriptProperties();
   var key = properties.getProperty(CONFIG("PROPERTY_PROKEY"));
 
   var isPro = false;
 
-  if (key == "pompom") {
+  if (key == "no-planet-b") {
     isPro = true;
   }
 
