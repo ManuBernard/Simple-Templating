@@ -11,40 +11,43 @@ function modelToCard(card, row, properties) {
   // Get all elements from card
   var elements = card.getPageElements();
 
-  elements.forEach(function(element) {
-    var type = element.getPageElementType();
+  // If promode is activated, allow dynamic colors and images replacement
+  if (isPro()) {
+    elements.forEach(function(element) {
+      var type = element.getPageElementType();
 
-    // Replace images
-    if (type == "IMAGE") {
-      replaceImage(element.asImage(), row);
-    }
+      // Replace images
+      if (type == "IMAGE") {
+        replaceImage(element.asImage(), row);
+      }
 
-    if (type == "LINE") {
-      // Replace line color
-      var fill_line = element.asLine().getLineFill();
-      replaceFillColor(fill_line, row);
-    }
+      if (type == "LINE") {
+        // Replace line color
+        var fill_line = element.asLine().getLineFill();
+        replaceFillColor(fill_line, row);
+      }
 
-    if (type == "SHAPE") {
-      // Replace shape background color
-      var fill_bg = element.asShape().getFill();
-      replaceFillColor(fill_bg, row);
+      if (type == "SHAPE") {
+        // Replace shape background color
+        var fill_bg = element.asShape().getFill();
+        replaceFillColor(fill_bg, row);
 
-      // Replace shape border color
-      var fill_border = element
-        .asShape()
-        .getBorder()
-        .getLineFill();
-      replaceFillColor(fill_border, row);
+        // Replace shape border color
+        var fill_border = element
+          .asShape()
+          .getBorder()
+          .getLineFill();
+        replaceFillColor(fill_border, row);
 
-      // Replace text colors
-      var text = element
-        .asShape()
-        .getText()
-        .getTextStyle();
-      replaceTextColor(text, row);
-    }
-  });
+        // Replace text colors
+        var text = element
+          .asShape()
+          .getText()
+          .getTextStyle();
+        replaceTextColor(text, row);
+      }
+    });
+  }
 }
 
 function replaceFillColor(fill, row) {
