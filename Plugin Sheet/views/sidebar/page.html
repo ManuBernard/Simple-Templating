@@ -103,47 +103,37 @@
         <hr />
 
         <!-- Submit button -->
-        <div>
-          <button
-            @click.prevent="generate"
-            class="action"
-            :disabled="!template || !folder"
-          >
-            Generate File
-          </button>
 
-          <div class="spacer"></div>
+        <button
+          @click.prevent="generate"
+          class="action"
+          :disabled="!template || !folder"
+        >
+          Generate File
+        </button>
 
-          <!-- Open file - After genreated file -->
-          <div v-if="lastfile" class="congratulation">
-            <b>Congratulations!</b>
-            <p>Your file has been successfully generated.</p>
-            <a class="button" :href="lastfile" target="_blank">Open File</a>
-          </div>
+        <div class="spacer"></div>
+
+        <!-- Open file - After genrated file -->
+        <div v-if="lastfile" class="congratulation">
+          <b>Congratulations!</b>
+          <p>Your file has been successfully generated.</p>
+          <a class="button" :href="lastfile" target="_blank">Open File</a>
         </div>
 
+        <div class="spacer"></div>
         <!-- FREE PLAN -->
         <div class="plan free-plan" v-if="plan == 'free'">
           <h3>You are using a free plan</h3>
-          <p>Limitations:</p>
-          <ul>
-            <li>25 cards / generation</li>
-            <li>3 texts / card</li>
-            <li>1 image / card</li>
-            <li>1 color / card</li>
-            <li>1 model / row</li>
-          </ul>
+          <p>
+            You can only use dynamic texts. To use also dynamic colors and
+            images, upgrade to a pro plan!
+          </p>
 
           <p>
-            Remove all limits with a pro plan.
+            <b>Simple Templating is in BETA, Pro Plan is free!</b>
           </p>
-          <p>
-            <b
-              >For a few month, as Simple Templating is in BETA, Pro Plan is
-              free! Get it now without any payment information.</b
-            >
-          </p>
-          <button class="action" @click="goPro">Go Pro</button>
+          <button class="action" @click="goPro">Go Pro For Free</button>
 
           <hr />
 
@@ -159,10 +149,9 @@
 
         <!-- PRO PLAN -->
         <div class="plan pro-plan" v-if="plan == 'pro'">
-          <h3>You are using a pro plan!</h3>
+          <h3>You are using a free pro plan!</h3>
           <p>
-            You benefit with unlimitaded cards generation, texts, images and
-            colors. Plus you can use pro feature like multiple model usage.
+            You can add as many dynamic texts, colors and images as you wish.
           </p>
           <button @click="removeProKey">Remove Key</button>
         </div>
