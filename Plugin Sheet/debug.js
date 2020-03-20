@@ -1,8 +1,8 @@
 // Manually generate the cards
 function manuallyGenerate() {
-  var templateId = "19q7BnfLZQ4X7d5y6WET7_BT1zlP_j4AF56zBebfaq58";
+  var templateId = "1AkFlTf8JbYxVtDHV0IiGVbNO3ilG8rvxHN8OfCDaPHY";
   var folderId = "1-VHwTYUu6tbKL0pT71L-ZMvjjMyxW7Ff";
-  var dataBaseId = "1Gd5KUoSqw9sRCEKhkafZl0akeyf0jpM_vxV_KHhGmHw";
+  var dataBaseId = "11slZxhLb77nLJVxc-V4ijEUrfuWvNidXrUhhPAdVch4";
   var name = "Manually generated 2";
 
   // Get list of lines from sheet

@@ -1,3 +1,33 @@
+function modelToCard2(card, row, properties) {
+  console.log("NEW CARD");
+
+  var elements = card.getPageElements();
+
+  elements.forEach(function(element) {
+    console.log("NEW ELEMENT");
+    var type = element.getPageElementType();
+    if (type == "SHAPE") {
+      var title = element.getTitle();
+      if (title) {
+        var instructions = title.split(";");
+        instructions.forEach(function(instruction) {
+          var instructionSplitted = instruction.split(":");
+          if (instructionSplitted[0] && instructionSplitted[1]) {
+            var commandline = {
+              command: instructionSplitted[0].trim().replace(" ", ""),
+              value: instructionSplitted[1].trim().replace(" ", "")
+            };
+            console.log(commandline);
+            if (commandline.code == "background") {
+              // background : @var1=10?$var2:$var3
+              console.log(commandline.code + " : " + commandline.value);
+            }
+          }
+        });
+      }
+    }
+  });
+}
 function modelToCard(card, row, properties) {
   // Replace texts
   properties.forEach(function(property) {

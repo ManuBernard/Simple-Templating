@@ -28,7 +28,7 @@ function cardsCreate(lines, presentationId) {
       card.move(presentation.getSlides().length);
 
       // Transform a model in a card passing dynamic data
-      modelToCard(card, line, properties);
+      modelToCard2(card, line, properties);
     });
   });
 
