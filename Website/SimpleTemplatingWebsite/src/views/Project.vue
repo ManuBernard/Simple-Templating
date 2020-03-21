@@ -1,6 +1,9 @@
 <template>
   <div v-if="project">
-    <v-breadcrumbs :items="breadcrumbsitems" divider="/">
+    <v-breadcrumbs
+      :items="breadcrumbsitems"
+      divider="/"
+    >
       <template v-slot:item="{ item }">
         <v-breadcrumbs-item
           @click.prevent="$router.push(item.href)"
@@ -13,7 +16,11 @@
 
     <v-container fluid>
       <h1 class="display-1">Project {{ project.name }}</h1>
-
+      <v-btn
+        small
+        color="primary"
+        @click="createDatabase"
+      >Create temp</v-btn>
       <v-row>
         <v-col>
           <v-card>
@@ -24,9 +31,11 @@
               <button @click="removeDatabase">Remove</button>
             </div>
             <div v-else>
-              <v-btn small color="primary" @click="selectDatabase"
-                >Select</v-btn
-              >
+              <v-btn
+                small
+                color="primary"
+                @click="selectDatabase"
+              >Select</v-btn>
             </div>
           </v-card>
         </v-col>
@@ -65,13 +74,13 @@
 <script>
 export default {
   computed: {
-    project() {
+    project () {
       return this.$store.getters["projects/byId"](this.$route.params.id);
     },
-    projects() {
+    projects () {
       return this.$store.getters["projects"];
     },
-    breadcrumbsitems() {
+    breadcrumbsitems () {
       return [
         {
           text: "Dashboard",
@@ -92,18 +101,76 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       projectname: null
     };
   },
 
   methods: {
-    selectDatabase() {
+    createDatabase () {
+      var self = this;
+      function start () {
+
+        // 2. Initialize the JavaScript client library.
+        gapi.client.init({
+          'apiKey': self.$gapi.config.apiKey,
+          // Your API key will be automatically added to the Discovery Document URLs.
+          'discoveryDocs': ['https://people.googleapis.com/$discovery/rest'],
+          // clientId and scope are optional if auth is not required.
+          'clientId': self.$gapi.config.clientId,
+          'scope': 'drive',
+        }).then(function () {
+          // 3. Initialize and make the API request.
+          gapi.client.drive.files.list({
+            'pageSize': 10,
+            'fields': "nextPageToken, files(id, name)"
+          }).then(function (response) {
+            console.log(response);
+          });
+        }).then(function (response) {
+          console.log(response.result);
+        }, function (reason) {
+          console.log(reason);
+        });
+      }
+      // 1. Load the JavaScript client library.
+      gapi.load('client', start);
+    },
+    createDatabase2 () {
+      var self = this;
+      function start () {
+        console.log(gapi);
+        gapi.client.init({
+
+          'apiKey': self.$gapi.config.apiKey,
+          // clientId and scope are optional if auth is not required.
+          'clientId': self.$gapi.config.clientId,
+          'scope': 'profile',
+        }).then(function (profile) {
+          console.log(profile)
+          // 3. Initialize and make the API request.
+          return gapi.client.request({
+            'path': 'https://people.googleapis.com/v1/people/me?requestMask.includeField=person.names',
+          })
+        }).then(function (response) {
+          console.log(response.result);
+        }, function (reason) {
+          console.log('Error: ' + reason.result.error.message);
+        });
+      }
+
+      this.$gapi._load()
+        .then(gapi => {
+          console.log('thaht')
+          gapi.load('client', start);
+        })
+    },
+    selectDatabase () {
       var self = this;
       this.$googleFilePicker("SPREADSHEETS", cb);
 
-      function cb(data) {
+      function cb (data) {
         var payload = {
           project: self.project,
           database: data
@@ -112,16 +179,16 @@ export default {
         self.$store.dispatch("projects/addDatabase", payload);
       }
     },
-    removeDatabase() {
+    removeDatabase () {
       this.$store.dispatch("projects/removeDatabase", {
         project: this.project
       });
     },
-    selectTemplate() {
+    selectTemplate () {
       var self = this;
       this.$googleFilePicker("PRESENTATIONS", cb);
 
-      function cb(data) {
+      function cb (data) {
         var payload = {
           project: self.project,
           template: data
@@ -130,16 +197,16 @@ export default {
         self.$store.dispatch("projects/addTemplate", payload);
       }
     },
-    removeTemplate() {
+    removeTemplate () {
       this.$store.dispatch("projects/removeTemplate", {
         project: this.project
       });
     },
-    selectFolder() {
+    selectFolder () {
       var self = this;
       this.$googleFilePicker("FOLDERS", cb);
 
-      function cb(data) {
+      function cb (data) {
         var payload = {
           project: self.project,
           folder: data
@@ -148,28 +215,28 @@ export default {
         self.$store.dispatch("projects/addFolder", payload);
       }
     },
-    removeFolder() {
+    removeFolder () {
       this.$store.dispatch("projects/removeFolder", {
         project: this.project
       });
     },
-    showDetails(data) {
+    showDetails (data) {
       if (data.picked === "picked") {
         console.log(data.docs);
       }
     },
-    remove() {
+    remove () {
       this.$store.dispatch("projects/remove", this.project);
       this.$router.push("/projects/");
     },
 
-    add() {
+    add () {
       this.$store.dispatch("projects/create", this.projectname);
 
       this.projectname = "";
     }
   },
-  created() {
+  created () {
     console.log(this.$gapi);
     let gDrive = document.createElement("script");
     gDrive.setAttribute("type", "text/javascript");
