@@ -24,6 +24,24 @@ export default new Router({
         import(/* webpackChunkName: "login" */ "./views/Login.vue")
     },
     {
+      path: "/newproject",
+      name: "newproject",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./views/Newproject.vue")
+    },
+    {
+      path: "/projects",
+      name: "projects",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./views/Projects.vue")
+    },
+    {
+      path: "/project/:id",
+      name: "project",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./views/Project.vue")
+    },
+    {
       path: "/dashboard",
       name: "dashboard",
       component: () =>

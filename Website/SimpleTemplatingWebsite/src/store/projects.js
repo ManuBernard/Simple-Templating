@@ -4,13 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 const firebase = require("@/firebaseConfig.js");
 
 const state = {
-  projects: [],
-  currentProjectId: null
+  projects: []
 };
 
 const getters = {
-  current: function(state) {
-    return state.projects.find(element => element.id == state.currentProjectId);
+  byId: function(state) {
+    return function(id) {
+      return state.projects.find(element => element.id == id);
+    };
   },
   projects: function(state) {
     return state.projects;
@@ -18,35 +19,70 @@ const getters = {
 };
 
 const actions = {
-  create: function({ commit, rootGetters }, projectname) {
+  create: function({ commit, rootGetters }, payload) {
     var uid = uuidv4();
     firebase.db
       .collection("projects")
       .doc(uid)
       .set({
-        name: projectname,
+        name: payload.projectname,
         userId: rootGetters["user/user"].id
       })
       .then(p => {
         commit("SELECT", uid);
+        payload.callback(uid);
       });
   },
-  select: function({ commit }, project) {
-    commit("SELECT", project.id);
-  },
-  remove: function({ rootGetters }, project) {
+
+  remove: function({ commit }, project) {
     firebase.db
       .collection("projects")
       .doc(project.id)
       .delete();
   },
-  update: function({ rootGetters }, payload) {
+  update: function({}, payload) {
     firebase.db
       .collection("projects")
       .doc(payload.id)
       .update({ name: payload.name });
   },
-  bind: firestoreAction(({ bindFirestoreRef, rootGetters }, user) => {
+  addDatabase: function({}, payload) {
+    firebase.db
+      .collection("projects")
+      .doc(payload.project.id)
+      .update({ database: payload.database });
+  },
+  removeDatabase: function({}, payload) {
+    firebase.db
+      .collection("projects")
+      .doc(payload.project.id)
+      .update({ database: null });
+  },
+  addTemplate: function({}, payload) {
+    firebase.db
+      .collection("projects")
+      .doc(payload.project.id)
+      .update({ template: payload.template });
+  },
+  removeTemplate: function({}, payload) {
+    firebase.db
+      .collection("projects")
+      .doc(payload.project.id)
+      .update({ template: null });
+  },
+  addFolder: function({}, payload) {
+    firebase.db
+      .collection("projects")
+      .doc(payload.project.id)
+      .update({ folder: payload.folder });
+  },
+  removeFolder: function({}, payload) {
+    firebase.db
+      .collection("projects")
+      .doc(payload.project.id)
+      .update({ folder: null });
+  },
+  bind: firestoreAction(({ bindFirestoreRef }, user) => {
     // return the promise returned by `bindFirestoreRef`
     return bindFirestoreRef(
       "projects",
@@ -55,11 +91,7 @@ const actions = {
   })
 };
 
-const mutations = {
-  SELECT: function(state, projectId) {
-    state.currentProjectId = projectId;
-  }
-};
+const mutations = {};
 
 export default {
   namespaced: true,

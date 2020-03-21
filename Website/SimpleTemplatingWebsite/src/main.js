@@ -3,9 +3,22 @@ import App from "./App";
 import router from "./router";
 import store from "./store/store";
 import vuetify from "./plugins/vuetify";
-
-// or import all icons if you don't care about bundle size
+import googleFilePicker from "./plugins/googleFilePicker";
 import "vue-awesome/icons";
+import "./googleApi";
+
+Vue.use(googleFilePicker);
+
+//src/main.js
+// import GAuth from "vue-google-oauth2";
+// const gauthOption = {
+//   clientId:
+//     "543570048454-tblderg0v6u4bm9e5jtdk07lh0la85hi.apps.googleusercontent.com",
+//   scope: "profile email",
+//   prompt: "select_account"
+// };
+
+// Vue.use(GAuth, gauthOption);
 
 /* Register component with one of 2 methods */
 
@@ -15,6 +28,7 @@ import Icon from "vue-awesome/components/Icon";
 Vue.component("v-icon", Icon);
 
 const firebase = require("./firebaseConfig.js");
+require("./googleApi");
 
 Vue.config.productionTip = false;
 

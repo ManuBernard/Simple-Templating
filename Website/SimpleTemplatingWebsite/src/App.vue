@@ -1,36 +1,51 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" app clipped>
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <template v-if="user">
+      <v-app-bar app clipped-left>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+        <v-toolbar-title>Simple Templating</v-toolbar-title>
 
-    <v-app-bar app clipped-left>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Simple Templating</v-toolbar-title>
-    </v-app-bar>
+        <v-spacer></v-spacer>
 
-    <v-content>
-      <v-container class="fill-height" fluid>
+        <div class="subtitle-1">{{ user.name }}</div>
+        <v-menu right top>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-avatar size="36px">
+                <img v-if="user.image" alt="Avatar" :src="user.image" />
+                <v-icon
+                  v-else
+                  :color="message.color"
+                  v-text="message.icon"
+                ></v-icon>
+              </v-avatar>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item @click="signout">
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="signout">
+              <v-list-item-title>Sign out</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-app-bar>
+
+      <v-navigation-drawer v-model="drawer" app floating permanent clipped>
+        <sidebar :drawer="drawer"></sidebar>
+      </v-navigation-drawer>
+
+      <v-content class="fill-height">
         <router-view></router-view>
-      </v-container>
-    </v-content>
+      </v-content>
+    </template>
+    <div v-else>
+      <v-content class="fill-height">
+        <login></login>
+      </v-content>
+    </div>
 
     <v-footer app>
       <span>&copy; 2020</span>
@@ -48,9 +63,37 @@ export default {
     drawer: null
   }),
 
+  computed: {
+    user() {
+      return this.$store.getters["user/user"];
+    }
+  },
+
+  methods: {
+    signout() {
+      this.$store.dispatch("user/signout");
+    }
+  },
+
+  mounted() {
+    // this.$gapi.currentUser().then(user => {
+    //   if (user) {
+    //     console.log("Signed in as %s", user.name);
+    //   } else {
+    //     console.log("No user is connected.");
+    //   }
+    // });
+  },
+
   created() {
     this.$vuetify.theme.dark = false;
-    this.$store.dispatch("user/init");
+    this.$gapi.currentUser().then(user => {
+      if (user) {
+        this.$store.dispatch("user/signin", user);
+      } else {
+        console.log("No user is connect.");
+      }
+    });
   }
 };
 </script>
