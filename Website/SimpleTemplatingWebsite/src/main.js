@@ -3,35 +3,18 @@ import App from "./App";
 import router from "./router";
 import store from "./store/store";
 import vuetify from "./plugins/vuetify";
-import googleFilePicker from "./plugins/googleFilePicker";
+import gapi from "./plugins/gapi/gapi";
 import "vue-awesome/icons";
-import "./googleApi";
-
-Vue.use(googleFilePicker);
-
-//src/main.js
-// import GAuth from "vue-google-oauth2";
-// const gauthOption = {
-//   clientId:
-//     "543570048454-tblderg0v6u4bm9e5jtdk07lh0la85hi.apps.googleusercontent.com",
-//   scope: "profile email",
-//   prompt: "select_account"
-// };
-
-// Vue.use(GAuth, gauthOption);
-
-/* Register component with one of 2 methods */
-
 import Icon from "vue-awesome/components/Icon";
 
-// globally (in your main .js file)
-Vue.component("v-icon", Icon);
-
 const firebase = require("./firebaseConfig.js");
-require("./googleApi");
+
+Vue.component("v-icon", Icon);
+Vue.use(gapi);
 
 Vue.config.productionTip = false;
 
+// Force Login
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
   const currentUser = firebase.auth().currentUser;

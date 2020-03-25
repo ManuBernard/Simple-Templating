@@ -90,52 +90,12 @@ export default {
 
   methods: {
     signout () {
-      this.$store.dispatch("user/signout");
+      this.$gapi.signout();
     }
   },
 
   mounted () {
-    // this.$gapi.currentUser().then(user => {
-    //   if (user) {
-    //     console.log("Signed in as %s", user.name);
-    //   } else {
-    //     console.log("No user is connected.");
-    //   }
-    // });
-  },
-
-  created () {
-    // Array of API discovery doc URLs for APIs used by the quickstart
-    var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest", "https://sheets.googleapis.com/$discovery/rest?version=v4", "https://slides.googleapis.com/$discovery/rest?version=v1"];
-
-
-    // included, separated by spaces.
-    var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations';
-
-    var self = this;
-    this.$vuetify.theme.dark = false;
-    this.$gapi.currentUser().then(user => {
-      if (user) {
-        this.$store.dispatch("user/signin", user);
-        this.$gapi._load()
-          .then(gapi => {
-            gapi.load('client', function () {
-              gapi.client.init({
-                apiKey: self.$gapi.config.apiKey,
-                clientId: self.$gapi.config.clientId,
-                discoveryDocs: DISCOVERY_DOCS,
-                scope: SCOPES
-              }).then(function (response) {
-
-              }, function (error) {
-                console.log(error)
-              });
-            });
-          })
-      } else {
-        console.log("No user is connect.");
-      }
-    });
+    this.$gapi.init();
   }
 };
 </script>

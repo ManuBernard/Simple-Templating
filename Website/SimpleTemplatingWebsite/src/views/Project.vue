@@ -197,30 +197,27 @@ export default {
 
         self.templatestuff(data);
       });
-    }
-    ,
-    createDatabase () {
-      var self = this;
-
-      gapi.client.drive.files.create({
-        name: self.project.name + " - database",
-        "mimeType": "application/vnd.google-apps.spreadsheet",
-        fields: "*"
-      }).then(function (response) {
-        self.addDatabase(response.result)
-      });
     },
 
     selectDatabase () {
-      this.$googleFilePicker("SPREADSHEETS", this.addDatabase);
+      this.$gapi.filePicker("SPREADSHEETS", this.linkDatabaseToProject);
     },
-    addDatabase (data) {
-      console.log(data);
+
+    createDatabase () {
+      var self = this;
+
+      this.$gapi.createDb("name", function (database) {
+        self.linkDatabaseToProject(database)
+      });
+    },
+
+    linkDatabaseToProject (database) {
+      console.log(database);
       var payload = {
         project: this.project,
         database: {
-          id: data.id,
-          name: data.name
+          id: database.id,
+          name: database.name
         }
       };
 
@@ -233,7 +230,7 @@ export default {
     },
     selectTemplate () {
       var self = this;
-      this.$googleFilePicker("PRESENTATIONS", cb);
+      this.$gapi.filePicker("PRESENTATIONS", cb);
 
       function cb (data) {
         var payload = {
@@ -251,7 +248,7 @@ export default {
     },
     selectFolder () {
       var self = this;
-      this.$googleFilePicker("FOLDERS", cb);
+      this.$gapi.filePicker("FOLDERS", cb);
 
       function cb (data) {
         var payload = {
