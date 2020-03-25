@@ -1,18 +1,31 @@
 <template>
   <v-app id="inspire">
     <template v-if="user">
-      <v-app-bar app clipped-left>
+      <v-app-bar
+        app
+        clipped-left
+      >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-toolbar-title>Simple Templating</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
         <div class="subtitle-1">{{ user.name }}</div>
-        <v-menu right top>
+        <v-menu
+          right
+          top
+        >
           <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
+            <v-btn
+              icon
+              v-on="on"
+            >
               <v-avatar size="36px">
-                <img v-if="user.image" alt="Avatar" :src="user.image" />
+                <img
+                  v-if="user.image"
+                  alt="Avatar"
+                  :src="user.image"
+                />
                 <v-icon
                   v-else
                   :color="message.color"
@@ -33,7 +46,13 @@
         </v-menu>
       </v-app-bar>
 
-      <v-navigation-drawer v-model="drawer" app floating permanent clipped>
+      <v-navigation-drawer
+        v-model="drawer"
+        app
+        floating
+        permanent
+        clipped
+      >
         <sidebar :drawer="drawer"></sidebar>
       </v-navigation-drawer>
 
@@ -64,18 +83,18 @@ export default {
   }),
 
   computed: {
-    user() {
+    user () {
       return this.$store.getters["user/user"];
     }
   },
 
   methods: {
-    signout() {
+    signout () {
       this.$store.dispatch("user/signout");
     }
   },
 
-  mounted() {
+  mounted () {
     // this.$gapi.currentUser().then(user => {
     //   if (user) {
     //     console.log("Signed in as %s", user.name);
@@ -85,11 +104,34 @@ export default {
     // });
   },
 
-  created() {
+  created () {
+    // Array of API discovery doc URLs for APIs used by the quickstart
+    var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest", "https://sheets.googleapis.com/$discovery/rest?version=v4", "https://slides.googleapis.com/$discovery/rest?version=v1"];
+
+
+    // included, separated by spaces.
+    var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations';
+
+    var self = this;
     this.$vuetify.theme.dark = false;
     this.$gapi.currentUser().then(user => {
       if (user) {
         this.$store.dispatch("user/signin", user);
+        this.$gapi._load()
+          .then(gapi => {
+            gapi.load('client', function () {
+              gapi.client.init({
+                apiKey: self.$gapi.config.apiKey,
+                clientId: self.$gapi.config.clientId,
+                discoveryDocs: DISCOVERY_DOCS,
+                scope: SCOPES
+              }).then(function (response) {
+
+              }, function (error) {
+                console.log(error)
+              });
+            });
+          })
       } else {
         console.log("No user is connect.");
       }

@@ -16,17 +16,18 @@
 
     <v-container fluid>
       <h1 class="display-1">Project {{ project.name }}</h1>
-      <v-btn
-        small
-        color="primary"
-        @click="createDatabase"
-      >Create temp</v-btn>
+      <button @click="readDatabase">Generate</button>
       <v-row>
         <v-col>
           <v-card>
             <h2>Database</h2>
             <div v-if="project.database">
               <h4>{{ project.database.name }}</h4>
+
+              <a
+                target="_blank"
+                :href="'https://docs.google.com/spreadsheets/d/'+ project.database.id+'/edit'"
+              >open</a>
 
               <button @click="removeDatabase">Remove</button>
             </div>
@@ -36,6 +37,11 @@
                 color="primary"
                 @click="selectDatabase"
               >Select</v-btn>
+              <v-btn
+                small
+                color="secondary"
+                @click="createDatabase"
+              >Create new</v-btn>
             </div>
           </v-card>
         </v-col>
@@ -108,76 +114,117 @@ export default {
   },
 
   methods: {
+    templatestuff (data) {
+      var self = this;
+      console.log(gapi.client.slides.presentations);
+
+
+      gapi.client.slides.presentations.get({
+        presentationId: self.project.template.id
+      }).then(function (response) {
+        console.log(response)
+
+        var requests = [{
+          duplicateObject: {
+            objectId: response.result.slides[0].objectId
+          }
+        },
+        {
+          duplicateObject: {
+            objectId: response.result.slides[0].objectId
+          }
+        },
+        {
+          duplicateObject: {
+            objectId: response.result.slides[0].objectId
+          }
+        },
+        {
+          duplicateObject: {
+            objectId: response.result.slides[0].objectId
+          }
+        },
+        {
+          duplicateObject: {
+            objectId: response.result.slides[0].objectId
+          }
+        }];
+
+        gapi.client.slides.presentations.batchUpdate({
+          presentationId: self.project.template.id,
+          requests: requests
+        }).then((createSlideResponse) => {
+          console.log(createSlideResponse)
+        });
+      });
+    },
+    readDatabase () {
+      function getJsonArrayFromData (data) {
+        var obj = {};
+        var result = [];
+        var headers = data[0];
+        var cols = headers.length;
+        var row = [];
+
+        for (var i = 1, l = data.length; i < l; i++) {
+          // get a row to fill the objectx
+          row = data[i];
+          // clear object
+          obj = {};
+          for (var col = 0; col < cols; col++) {
+            // fill object with new values
+            if (headers[col].substring(0, 1) == "#") {
+              headers[col] = headers[col].toUpperCase();
+            }
+            obj[headers[col]] = row[col];
+          }
+          // add object in a final result
+          result.push(obj);
+        }
+
+        return result;
+      }
+
+      var self = this;
+
+
+      gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: self.project.database.id,
+        range: "Database"
+
+      }).then(function (response) {
+        var data = getJsonArrayFromData(response.result.values);
+
+        self.templatestuff(data);
+      });
+    }
+    ,
     createDatabase () {
       var self = this;
-      function start () {
 
-        // 2. Initialize the JavaScript client library.
-        gapi.client.init({
-          'apiKey': self.$gapi.config.apiKey,
-          // Your API key will be automatically added to the Discovery Document URLs.
-          'discoveryDocs': ['https://people.googleapis.com/$discovery/rest'],
-          // clientId and scope are optional if auth is not required.
-          'clientId': self.$gapi.config.clientId,
-          'scope': 'drive',
-        }).then(function () {
-          // 3. Initialize and make the API request.
-          gapi.client.drive.files.list({
-            'pageSize': 10,
-            'fields': "nextPageToken, files(id, name)"
-          }).then(function (response) {
-            console.log(response);
-          });
-        }).then(function (response) {
-          console.log(response.result);
-        }, function (reason) {
-          console.log(reason);
-        });
-      }
-      // 1. Load the JavaScript client library.
-      gapi.load('client', start);
+      gapi.client.drive.files.create({
+        name: self.project.name + " - database",
+        "mimeType": "application/vnd.google-apps.spreadsheet",
+        fields: "*"
+      }).then(function (response) {
+        self.addDatabase(response.result)
+      });
     },
-    createDatabase2 () {
-      var self = this;
-      function start () {
-        console.log(gapi);
-        gapi.client.init({
 
-          'apiKey': self.$gapi.config.apiKey,
-          // clientId and scope are optional if auth is not required.
-          'clientId': self.$gapi.config.clientId,
-          'scope': 'profile',
-        }).then(function (profile) {
-          console.log(profile)
-          // 3. Initialize and make the API request.
-          return gapi.client.request({
-            'path': 'https://people.googleapis.com/v1/people/me?requestMask.includeField=person.names',
-          })
-        }).then(function (response) {
-          console.log(response.result);
-        }, function (reason) {
-          console.log('Error: ' + reason.result.error.message);
-        });
-      }
-
-      this.$gapi._load()
-        .then(gapi => {
-          console.log('thaht')
-          gapi.load('client', start);
-        })
-    },
     selectDatabase () {
-      var self = this;
-      this.$googleFilePicker("SPREADSHEETS", cb);
+      this.$googleFilePicker("SPREADSHEETS", this.addDatabase);
+    },
+    addDatabase (data) {
+      console.log(data);
+      var payload = {
+        project: this.project,
+        database: {
+          id: data.id,
+          name: data.name
+        }
+      };
 
-      function cb (data) {
-        var payload = {
-          project: self.project,
-          database: data
-        };
-
-        self.$store.dispatch("projects/addDatabase", payload);
-      }
+      this.$store.dispatch("projects/addDatabase", payload);
     },
     removeDatabase () {
       this.$store.dispatch("projects/removeDatabase", {
@@ -237,11 +284,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$gapi);
-    let gDrive = document.createElement("script");
-    gDrive.setAttribute("type", "text/javascript");
-    gDrive.setAttribute("src", "https://apis.google.com/js/api.js");
-    document.head.appendChild(gDrive);
+
   }
 };
 </script>
