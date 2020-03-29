@@ -4,13 +4,15 @@ import { vuexfireMutations } from "vuexfire";
 
 import projects from "@/store/projects";
 import user from "@/store/user";
+import exports from "@/store/exports";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
     projects,
-    user
+    user,
+    exports
   },
   mutations: vuexfireMutations
 });

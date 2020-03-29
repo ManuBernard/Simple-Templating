@@ -1,31 +1,18 @@
 <template>
   <v-app id="inspire">
     <template v-if="user">
-      <v-app-bar
-        app
-        clipped-left
-      >
+      <v-app-bar dark app color="primary accent-4" clipped-left>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-toolbar-title>Simple Templating</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
         <div class="subtitle-1">{{ user.name }}</div>
-        <v-menu
-          right
-          top
-        >
+        <v-menu right top>
           <template v-slot:activator="{ on }">
-            <v-btn
-              icon
-              v-on="on"
-            >
+            <v-btn icon v-on="on">
               <v-avatar size="36px">
-                <img
-                  v-if="user.image"
-                  alt="Avatar"
-                  :src="user.image"
-                />
+                <img v-if="user.image" alt="Avatar" :src="user.image" />
                 <v-icon
                   v-else
                   :color="message.color"
@@ -46,18 +33,14 @@
         </v-menu>
       </v-app-bar>
 
-      <v-navigation-drawer
-        v-model="drawer"
-        app
-        floating
-        permanent
-        clipped
-      >
+      <v-navigation-drawer v-model="drawer" app floating permanent clipped>
         <sidebar :drawer="drawer"></sidebar>
       </v-navigation-drawer>
 
       <v-content class="fill-height">
-        <router-view></router-view>
+        <transition name="fade" mode="out-in">
+          <router-view :key="$route.fullPath"></router-view>
+        </transition>
       </v-content>
     </template>
     <div v-else>
@@ -83,19 +66,33 @@ export default {
   }),
 
   computed: {
-    user () {
+    user() {
       return this.$store.getters["user/user"];
     }
   },
 
   methods: {
-    signout () {
+    signout() {
       this.$gapi.signout();
     }
   },
 
-  mounted () {
+  mounted() {
     this.$gapi.init();
   }
 };
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+</style>

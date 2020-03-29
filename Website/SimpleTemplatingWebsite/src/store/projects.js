@@ -19,74 +19,106 @@ const getters = {
 };
 
 const actions = {
-  create: function({ commit, rootGetters }, payload) {
-    var uid = uuidv4();
+  // Project
+  create: function({ dispatch, rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
-      .doc(uid)
+      .doc(payload.project.id)
       .set({
-        name: payload.projectname,
-        userId: rootGetters["user/user"].id
+        name: payload.name,
+        created: Date.now()
+        // userId: rootGetters["user/user"].id
       })
       .then(p => {
-        commit("SELECT", uid);
-        payload.callback(uid);
+        dispatch("addDatabase", payload);
+        dispatch("addTemplate", payload);
+        dispatch("addFolder", payload);
+        payload.callback();
       });
   },
-
-  remove: function({ commit }, project) {
+  remove: function({ commit, rootGetters }, project) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(project.id)
       .delete();
   },
-  update: function({}, payload) {
+  update: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.id)
       .update({ name: payload.name });
   },
-  addDatabase: function({}, payload) {
+
+  // Database
+  addDatabase: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.project.id)
       .update({ database: payload.database });
   },
-  removeDatabase: function({}, payload) {
+  removeDatabase: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.project.id)
       .update({ database: null });
   },
-  addTemplate: function({}, payload) {
+
+  // Template
+  addTemplate: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.project.id)
       .update({ template: payload.template });
   },
-  removeTemplate: function({}, payload) {
+  removeTemplate: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.project.id)
       .update({ template: null });
   },
-  addFolder: function({}, payload) {
+
+  // Folder
+  addFolder: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.project.id)
-      .update({ folder: payload.folder });
+      .update({ folder: payload.folderExport });
   },
-  removeFolder: function({}, payload) {
+  removeFolder: function({ rootGetters }, payload) {
     firebase.db
+      .collection("users")
+      .doc(rootGetters["user/user"].id)
       .collection("projects")
       .doc(payload.project.id)
       .update({ folder: null });
   },
-  bind: firestoreAction(({ bindFirestoreRef }, user) => {
-    // return the promise returned by `bindFirestoreRef`
+
+  // Bind to firebase
+  bind: firestoreAction(({ bindFirestoreRef, rootGetters }, user) => {
     return bindFirestoreRef(
       "projects",
-      firebase.db.collection("projects").where("userId", "==", user.id)
+      firebase.db
+        .collection("users")
+        .doc(rootGetters["user/user"].id)
+        .collection("projects")
+        .orderBy("created", "desc")
+      // firebase.db.collection("projects").where("userId", "==", user.id)
     );
   })
 };

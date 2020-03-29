@@ -3,8 +3,8 @@ import App from "./App";
 import router from "./router";
 import store from "./store/store";
 import vuetify from "./plugins/vuetify";
-import gapi from "./plugins/gapi/gapi";
-import "vue-awesome/icons";
+import gapi from "./plugins/gapi/init";
+
 import Icon from "vue-awesome/components/Icon";
 
 const firebase = require("./firebaseConfig.js");

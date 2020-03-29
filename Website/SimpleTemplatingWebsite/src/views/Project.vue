@@ -1,6 +1,6 @@
 <template>
   <div v-if="project">
-    <v-breadcrumbs
+    <!-- <v-breadcrumbs
       :items="breadcrumbsitems"
       divider="/"
     >
@@ -12,81 +12,222 @@
           {{ item.text.toUpperCase() }}
         </v-breadcrumbs-item>
       </template>
-    </v-breadcrumbs>
+    </v-breadcrumbs> -->
 
     <v-container fluid>
-      <h1 class="display-1">Project {{ project.name }}</h1>
-      <button @click="readDatabase">Generate</button>
+      <v-toolbar flat>
+        <v-toolbar-title class="headline"
+          ><span class="font-weight-thin">The</span> {{ project.name }}
+          <span class="font-weight-thin">project</span>
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn
+          target="_blank"
+          color="secondary"
+          outlined
+          href="http://simpletemplating.com/documentation/"
+        >
+          Documentation <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
+        </v-btn>
+      </v-toolbar>
       <v-row>
         <v-col>
-          <v-card>
-            <h2>Database</h2>
-            <div v-if="project.database">
-              <h4>{{ project.database.name }}</h4>
-
+          <v-card class="px-4 py-4">
+            <v-card-title class="justify-center">
               <a
                 target="_blank"
-                :href="'https://docs.google.com/spreadsheets/d/'+ project.database.id+'/edit'"
-              >open</a>
+                :href="
+                  'https://docs.google.com/spreadsheets/d/' +
+                    project.database.id +
+                    '/edit'
+                "
+              >
+                <v-img
+                  contain
+                  :src="require('../assets/sheets.png')"
+                  max-width="128"
+                />
+              </a>
+            </v-card-title>
 
-              <button @click="removeDatabase">Remove</button>
-            </div>
-            <div v-else>
+            <v-card-title class="headline justify-center">
               <v-btn
-                small
+                outlined
+                target="_blank"
                 color="primary"
-                @click="selectDatabase"
-              >Select</v-btn>
+                :href="
+                  'https://docs.google.com/spreadsheets/d/' +
+                    project.database.id +
+                    '/edit'
+                "
+                >{{ project.database.name }}</v-btn
+              >
+            </v-card-title>
+
+            <v-card-actions class="justify-center">
+              <v-spacer></v-spacer>
+              <v-btn text small color="secondary" @click="selectDatabase"
+                >Change file</v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
+        <v-col>
+          <v-card class="px-4 py-4">
+            <v-card-title class="justify-center">
+              <v-img
+                contain
+                :src="require('../assets/slides.png')"
+                max-width="128"
+              />
+            </v-card-title>
+
+            <v-card-title class="headline justify-center">
               <v-btn
-                small
-                color="secondary"
-                @click="createDatabase"
-              >Create new</v-btn>
-            </div>
-          </v-card>
-        </v-col>
+                outlined
+                target="_blank"
+                color="primary"
+                :href="
+                  'https://docs.google.com/presentation/d/' +
+                    project.template.id +
+                    '/edit'
+                "
+                >{{ project.template.name }}</v-btn
+              >
+            </v-card-title>
 
-        <v-col>
-          <v-card>
-            <h2>Template</h2>
-            <div v-if="project.template">
-              <h4>{{ project.template.name }}</h4>
-              <button @click="removeTemplate">Remove</button>
-            </div>
-            <div v-else>
-              <button @click="selectTemplate">Select</button>
-            </div>
-          </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card>
-            <h2>Folder</h2>
-            <div v-if="project.folder">
-              <h4>{{ project.folder.name }}</h4>
-              <button @click="removeFolder">Remove</button>
-            </div>
-            <div v-else>
-              <button @click="selectFolder">Select</button>
-            </div>
+            <v-card-actions class="justify-center">
+              <v-spacer></v-spacer>
+              <v-btn text small color="secondary" @click="selectTemplate"
+                >Change file
+              </v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
-      <button @click="remove">Remove</button>
+
+      <v-toolbar class="my-2" flat>
+        <v-row align="center" justify="center">
+          <v-col></v-col>
+          <v-col class="text-center">
+            <v-btn x-large color="primary" @click="templetify"
+              >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="text-right">
+            <v-btn
+              small
+              outlined
+              color="primary"
+              target="_blank"
+              class="mr-1 ml-2"
+              :href="
+                'https://docs.google.com/drive/u/0/folders/' + project.folder.id
+              "
+              >Output folder: {{ project.folder.name }}</v-btn
+            >
+            <v-btn text small color="secondary" @click="selectFolder">
+              <v-icon>mdi-settings</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-toolbar>
+
+      <v-data-table
+        :headers="headers"
+        :items="formatedExports"
+        :items-per-page="5"
+        class="elevation-1"
+      >
+        <template v-slot:item.link="{ item }">
+          <v-btn text target="_blank" color="secondary" :href="item.link"
+            >View
+          </v-btn>
+        </template></v-data-table
+      >
+      <v-toolbar flat>
+        <v-spacer></v-spacer>
+        <div v-if="!remove">
+          <v-btn outlined tile color="error" @click="remove = true">
+            Remove project
+          </v-btn>
+        </div>
+        <div v-else>
+          <v-btn
+            outlined
+            tile
+            color="secondary"
+            class="mr-4"
+            @click="remove = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn outlined tile color="error" @click="removeProject">
+            Confirm remove project
+          </v-btn>
+        </div>
+      </v-toolbar>
     </v-container>
+    <v-overlay v-if="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+
+    <v-overlay
+      color="primary"
+      opacity="0.8"
+      class="text-center"
+      v-if="lastGenerated"
+    >
+      <v-icon class="display-4 mb-10">mdi-thumb-up-outline</v-icon>
+
+      <h2 class="display-1 font-weight-bold  mb-10">
+        {{ lastGenerated.name }} has been freshly generated
+      </h2>
+
+      <v-btn @click="openLastGenerated" x-large class="mr-4">
+        Open it
+      </v-btn>
+      <v-btn @click="lastGenerated = null" fab text x-large>
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-overlay>
   </div>
 </template>
 
 <script>
 export default {
   computed: {
-    project () {
+    project() {
       return this.$store.getters["projects/byId"](this.$route.params.id);
     },
-    projects () {
-      return this.$store.getters["projects"];
+
+    exports() {
+      return this.$store.getters["exports/exports"];
     },
-    breadcrumbsitems () {
+    formatedExports() {
+      var ret = [];
+      // const options = {
+      //   weekday: "long",
+      //   year: "numeric",
+      //   month: "long",
+      //   day: "numeric"
+      // };
+
+      // .toLocaleDateString('en-US', options)
+
+      this.exports.forEach(exp => {
+        ret.push({
+          name: exp.name,
+          created: exp.created,
+          link: "https://docs.google.com/presentation/d/" + exp.id + "/edit"
+        });
+      });
+      return ret;
+    },
+    breadcrumbsitems() {
       return [
         {
           text: "Dashboard",
@@ -107,132 +248,75 @@ export default {
     }
   },
 
-  data () {
+  data() {
     return {
-      projectname: null
+      remove: false,
+      loading: false,
+      lastGenerated: null,
+      headers: [
+        {
+          text: "Name",
+          align: "start",
+          sortable: true,
+          value: "name"
+        },
+        { text: "Created", value: "created" },
+        { text: "Link", value: "link" }
+      ]
     };
   },
 
   methods: {
-    templatestuff (data) {
+    playSound() {
+      var sound = require("../assets/success.mp3");
+      var audio = new Audio(sound);
+      audio.play();
+    },
+    templetify() {
       var self = this;
-      console.log(gapi.client.slides.presentations);
+      this.loading = true;
 
-
-      gapi.client.slides.presentations.get({
-        presentationId: self.project.template.id
-      }).then(function (response) {
-        console.log(response)
-
-        var requests = [{
-          duplicateObject: {
-            objectId: response.result.slides[0].objectId
-          }
-        },
-        {
-          duplicateObject: {
-            objectId: response.result.slides[0].objectId
-          }
-        },
-        {
-          duplicateObject: {
-            objectId: response.result.slides[0].objectId
-          }
-        },
-        {
-          duplicateObject: {
-            objectId: response.result.slides[0].objectId
-          }
-        },
-        {
-          duplicateObject: {
-            objectId: response.result.slides[0].objectId
-          }
-        }];
-
-        gapi.client.slides.presentations.batchUpdate({
-          presentationId: self.project.template.id,
-          requests: requests
-        }).then((createSlideResponse) => {
-          console.log(createSlideResponse)
-        });
-      });
-    },
-    readDatabase () {
-      function getJsonArrayFromData (data) {
-        var obj = {};
-        var result = [];
-        var headers = data[0];
-        var cols = headers.length;
-        var row = [];
-
-        for (var i = 1, l = data.length; i < l; i++) {
-          // get a row to fill the objectx
-          row = data[i];
-          // clear object
-          obj = {};
-          for (var col = 0; col < cols; col++) {
-            // fill object with new values
-            if (headers[col].substring(0, 1) == "#") {
-              headers[col] = headers[col].toUpperCase();
-            }
-            obj[headers[col]] = row[col];
-          }
-          // add object in a final result
-          result.push(obj);
-        }
-
-        return result;
-      }
-
-      var self = this;
-
-
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: self.project.database.id,
-        range: "Database"
-
-      }).then(function (response) {
-        var data = getJsonArrayFromData(response.result.values);
-
-        self.templatestuff(data);
+      this.$gapi.templetify(this.project, self.exports.length, function(data) {
+        data.project = self.project;
+        data.callback = function(exportFile) {
+          self.playSound();
+          window.setTimeout(function() {
+            self.loading = false;
+            self.lastGenerated = exportFile;
+          }, 1000);
+        };
+        self.$store.dispatch("exports/push", data);
       });
     },
 
-    selectDatabase () {
-      this.$gapi.filePicker("SPREADSHEETS", this.linkDatabaseToProject);
+    openLastGenerated: function() {
+      window.open(
+        "https://docs.google.com/presentation/d/" +
+          this.lastGenerated.id +
+          "/edit"
+      );
+      this.lastGenerated = null;
     },
 
-    createDatabase () {
-      var self = this;
+    selectDatabase() {
+      this.$gapi.filePicker("SPREADSHEETS", function(database) {
+        var payload = {
+          project: this.project,
+          database: {
+            id: database.id,
+            name: database.name
+          }
+        };
 
-      this.$gapi.createDb("name", function (database) {
-        self.linkDatabaseToProject(database)
+        this.$store.dispatch("projects/addDatabase", payload);
       });
     },
 
-    linkDatabaseToProject (database) {
-      console.log(database);
-      var payload = {
-        project: this.project,
-        database: {
-          id: database.id,
-          name: database.name
-        }
-      };
-
-      this.$store.dispatch("projects/addDatabase", payload);
-    },
-    removeDatabase () {
-      this.$store.dispatch("projects/removeDatabase", {
-        project: this.project
-      });
-    },
-    selectTemplate () {
+    selectTemplate() {
       var self = this;
       this.$gapi.filePicker("PRESENTATIONS", cb);
 
-      function cb (data) {
+      function cb(data) {
         var payload = {
           project: self.project,
           template: data
@@ -241,16 +325,12 @@ export default {
         self.$store.dispatch("projects/addTemplate", payload);
       }
     },
-    removeTemplate () {
-      this.$store.dispatch("projects/removeTemplate", {
-        project: this.project
-      });
-    },
-    selectFolder () {
+
+    selectFolder() {
       var self = this;
       this.$gapi.filePicker("FOLDERS", cb);
 
-      function cb (data) {
+      function cb(data) {
         var payload = {
           project: self.project,
           folder: data
@@ -259,29 +339,30 @@ export default {
         self.$store.dispatch("projects/addFolder", payload);
       }
     },
-    removeFolder () {
-      this.$store.dispatch("projects/removeFolder", {
-        project: this.project
-      });
-    },
-    showDetails (data) {
+    showDetails(data) {
       if (data.picked === "picked") {
         console.log(data.docs);
       }
     },
-    remove () {
+    removeProject() {
       this.$store.dispatch("projects/remove", this.project);
       this.$router.push("/projects/");
-    },
-
-    add () {
-      this.$store.dispatch("projects/create", this.projectname);
-
-      this.projectname = "";
     }
   },
-  created () {
-
+  mounted() {
+    this.$store.dispatch("exports/bind", this.$route.params.id);
   }
 };
 </script>
+<style>
+.list-item {
+}
+.list-enter-active,
+.list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+</style>
