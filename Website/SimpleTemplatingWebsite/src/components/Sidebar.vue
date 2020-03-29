@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-list dense>
-      <v-list-item link>
+      <v-list-item link @click="$router.push('/projects')">
         <v-list-item-action>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-action>

@@ -70,7 +70,7 @@
 
             <v-card-actions class="justify-center">
               <v-spacer></v-spacer>
-              <v-btn text small color="secondary" @click="selectDatabase"
+              <v-btn text color="secondary" @click="selectDatabase"
                 >Change file</v-btn
               >
               <v-spacer></v-spacer>
@@ -113,7 +113,7 @@
 
             <v-card-actions class="justify-center">
               <v-spacer></v-spacer>
-              <v-btn text small color="secondary" @click="selectTemplate"
+              <v-btn text color="secondary" @click="selectTemplate"
                 >Change file
               </v-btn>
               <v-spacer></v-spacer>
@@ -132,7 +132,6 @@
           </v-col>
           <v-col class="text-right">
             <v-btn
-              small
               outlined
               color="primary"
               target="_blank"
@@ -140,9 +139,9 @@
               :href="
                 'https://docs.google.com/drive/u/0/folders/' + project.folder.id
               "
-              >Output folder: {{ project.folder.name }}</v-btn
+              >Output: {{ project.folder.name }}</v-btn
             >
-            <v-btn text small color="secondary" @click="selectFolder">
+            <v-btn icon color="secondary" @click="selectFolder">
               <v-icon>mdi-settings</v-icon>
             </v-btn>
           </v-col>
@@ -156,7 +155,7 @@
         class="elevation-1"
       >
         <template v-slot:item.link="{ item }">
-          <v-btn text target="_blank" color="secondary" :href="item.link"
+          <v-btn outlined target="_blank" color="primary" :href="item.link"
             >View
           </v-btn>
         </template></v-data-table
