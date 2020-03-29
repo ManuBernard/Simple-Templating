@@ -1,24 +1,28 @@
 <template>
   <div v-if="project">
     <!-- <v-breadcrumbs
-      :items="breadcrumbsitems"
-      divider="/"
+  :items="breadcrumbsitems"
+  divider="/"
+>
+  <template v-slot:item="{ item }">
+    <v-breadcrumbs-item
+      @click.prevent="$router.push(item.href)"
+      :disabled="item.disabled"
     >
-      <template v-slot:item="{ item }">
-        <v-breadcrumbs-item
-          @click.prevent="$router.push(item.href)"
-          :disabled="item.disabled"
-        >
-          {{ item.text.toUpperCase() }}
-        </v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs> -->
+      {{ item.text.toUpperCase() }}
+    </v-breadcrumbs-item>
+  </template>
+</v-breadcrumbs> -->
 
     <v-container fluid>
       <v-toolbar flat>
-        <v-toolbar-title class="headline"
-          ><span class="font-weight-thin">The</span> {{ project.name }}
+        <v-toolbar-title class="headline">
+          <span class="font-weight-thin">The</span> {{ project.name }}
           <span class="font-weight-thin">project</span>
+
+          <v-btn icon class="ml-1" color="secondary" @click.stop="showRenamer">
+            <v-icon>mdi-pencil-outline</v-icon>
+          </v-btn>
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
@@ -77,11 +81,20 @@
         <v-col>
           <v-card class="px-4 py-4">
             <v-card-title class="justify-center">
-              <v-img
-                contain
-                :src="require('../assets/slides.png')"
-                max-width="128"
-              />
+              <a
+                target="_blank"
+                :href="
+                  'https://docs.google.com/presentation/d/' +
+                    project.template.id +
+                    '/edit'
+                "
+              >
+                <v-img
+                  contain
+                  :src="require('../assets/slides.png')"
+                  max-width="128"
+                />
+              </a>
             </v-card-title>
 
             <v-card-title class="headline justify-center">
@@ -194,6 +207,44 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-overlay>
+
+    <v-dialog v-model="dialog" width="500">
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>
+          Rename project
+        </v-card-title>
+
+        <v-card-text>
+          <v-form ref="form" v-model="valid" @submit.prevent="savename">
+            <v-text-field
+              v-model="projectname"
+              :counter="30"
+              :rules="nameRules"
+              label="Project name"
+              required
+            ></v-text-field>
+
+            <v-btn
+              :disabled="!valid"
+              color="success"
+              class="mr-4"
+              @click="savename"
+            >
+              Submit
+            </v-btn>
+          </v-form>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" text @click="dialog = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -253,6 +304,12 @@ export default {
       remove: false,
       loading: false,
       lastGenerated: null,
+      projectname: null,
+      dialog: false,
+      nameRules: [
+        v => !!v || "Name is required",
+        v => (v && v.length <= 30) || "Name must be less than 30 characters"
+      ],
       headers: [
         {
           text: "Name",
@@ -267,19 +324,29 @@ export default {
   },
 
   methods: {
-    playSound() {
-      var sound = require("../assets/success.mp3");
-      var audio = new Audio(sound);
-      audio.play();
+    showRenamer() {
+      this.dialog = true;
+      this.projectname = this.project.name;
+    },
+    savename() {
+      this.dialog = false;
+      this.$store.dispatch("projects/update", {
+        id: this.project.id,
+        name: this.projectname
+      });
     },
     templetify() {
       var self = this;
       this.loading = true;
 
-      this.$gapi.templetify(this.project, self.exports.length, function(data) {
+      this.$gapi.templetify(this.project, self.exports.length + 1, function(
+        data
+      ) {
         data.project = self.project;
         data.callback = function(exportFile) {
-          self.playSound();
+          var sound = require("../assets/success.mp3");
+          var audio = new Audio(sound);
+          audio.play();
           window.setTimeout(function() {
             self.loading = false;
             self.lastGenerated = exportFile;
@@ -337,11 +404,6 @@ export default {
         };
 
         self.$store.dispatch("projects/addFolder", payload);
-      }
-    },
-    showDetails(data) {
-      if (data.picked === "picked") {
-        console.log(data.docs);
       }
     },
     removeProject() {

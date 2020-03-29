@@ -1,27 +1,13 @@
 <template>
-  <v-container
-    class="fill-height"
-    fluid
-  >
-    <v-row
-      justify="center"
-      align="center"
-    >
+  <v-container class="fill-height" fluid>
+    <v-row justify="center" align="center">
       <v-col>
-
-        <v-card
-          max-width="500"
-          class="mx-auto"
-        >
+        <v-card max-width="500" class="mx-auto">
           <v-card-title class="primary">
             New project
           </v-card-title>
           <v-card-text>
-            <v-form
-              ref="form"
-              v-model="valid"
-              @submit.prevent="add"
-            >
+            <v-form ref="form" v-model="valid" @submit.prevent="add">
               <v-text-field
                 v-model="projectname"
                 :counter="30"
@@ -41,32 +27,23 @@
             </v-form>
 
             <div v-if="!folderRoot">
-              By default, your project will be created at the root of your Drive.
-              <a
-                color="primary"
-                @click.prevent="selectFolder"
-              >
+              By default, your project will be created at the root of your
+              Drive.
+              <a color="primary" @click.prevent="selectFolder">
                 Change location
               </a>
             </div>
             <div v-else>
-              Output folder : {{folder.root}}
-              <a
-                color="primary"
-                @click.prevent="selectFolder"
-              >
+              Output folder : {{ folder.root }}
+              <a color="primary" @click.prevent="selectFolder">
                 Change folder
               </a>
             </div>
-
           </v-card-text>
         </v-card>
 
         <v-overlay v-if="loading">
-          <v-progress-circular
-            indeterminate
-            size="64"
-          ></v-progress-circular>
+          <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
       </v-col>
     </v-row>
@@ -77,7 +54,7 @@
 export default {
   computed: {},
 
-  data () {
+  data() {
     return {
       loading: false,
       projectname: null,
@@ -94,26 +71,29 @@ export default {
   },
 
   methods: {
-    selectFolder () {
+    selectFolder() {
       const self = this;
       this.$gapi.filePicker("FOLDERS", cb);
-      function cb (data) {
+      function cb(data) {
         self.folderRoot = data;
       }
     },
 
-    add () {
+    add() {
       const self = this;
       self.loading = true;
-      this.$gapi.createNewProject({
-        name: this.projectname
-        // parent: '1klgjMT4VxC0w1lHr-ibP6yTFLpaLzAak'
-      }, function (data) {
-        self.saveProject(data);
-      });
+      this.$gapi.createNewProject(
+        {
+          name: this.projectname
+          // parent: '1klgjMT4VxC0w1lHr-ibP6yTFLpaLzAak'
+        },
+        function(data) {
+          self.saveProject(data);
+        }
+      );
     },
 
-    saveProject (data) {
+    saveProject(data) {
       var self = this;
       const payload = {
         name: self.projectname,
@@ -121,7 +101,7 @@ export default {
         template: data.template,
         folderExport: data.folderExport,
         project: data.folderRoot,
-        callback: function () {
+        callback: function() {
           self.redirect(data.folderRoot.id);
         }
       };
@@ -129,11 +109,10 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    redirect (id) {
+    redirect(id) {
       this.projectname = "";
       this.$router.push("/project/" + id);
     }
-
-  },
+  }
 };
 </script>

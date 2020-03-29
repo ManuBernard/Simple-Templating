@@ -10,7 +10,7 @@
         <div class="subtitle-1">{{ user.name }}</div>
         <v-menu right top>
           <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
+            <v-btn class="mx-2" icon v-on="on">
               <v-avatar size="36px">
                 <img v-if="user.image" alt="Avatar" :src="user.image" />
                 <v-icon
