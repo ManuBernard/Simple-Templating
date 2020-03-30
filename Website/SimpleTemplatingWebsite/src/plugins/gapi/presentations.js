@@ -82,7 +82,6 @@ function replaceContent() {
     .then(function(response) {
       var requests = [];
       response.result.slides.forEach((slide, index) => {
-        //   console.log(slide);
         const line = sheetdata[index];
 
         requests = replaceText(slide, line, requests);
@@ -116,32 +115,46 @@ function replaceText(slide, line, requests) {
 
 function replaceColors(slide, line, requests) {
   slide.pageElements.forEach(element => {
-    if (element.shape && element.description) {
+    console.log(element);
+    if (element.description) {
       var commands = parseDescription(element.description);
+
       commands.forEach(command => {
         if (line[command.value]) {
-          if (command.key == "background-color") {
-            var color = parseColor(line[command.value]);
-            if (color) {
-              requests.push(backgroundColor(element, color));
+          if (element.shape) {
+            if (command.key == "background-color") {
+              var color = parseColor(line[command.value]);
+              if (color) {
+                requests.push(backgroundColor(element, color));
+              }
+            }
+
+            if (command.key == "border-color") {
+              var color = parseColor(line[command.value]);
+              if (color) {
+                requests.push(borderColor(element, color));
+              }
+            }
+
+            if (command.key == "text-color") {
+              var color = parseColor(line[command.value]);
+              if (color) {
+                requests.push(textColor(element, color));
+              }
             }
           }
-
-          if (command.key == "border-color") {
-            var color = parseColor(line[command.value]);
-            if (color) {
-              requests.push(borderColor(element, color));
-            }
-          }
-
-          if (command.key == "text-color") {
-            var color = parseColor(line[command.value]);
-            if (color) {
-              requests.push(textColor(element, color));
+          if (element.line) {
+            if (command.key == "line-color") {
+              var color = parseColor(line[command.value]);
+              if (color) {
+                requests.push(lineColor(element, color));
+              }
             }
           }
         }
       });
+    }
+    if (element.shape && element.description) {
     }
   });
 
@@ -180,13 +193,26 @@ function borderColor(element, color) {
   };
 }
 
+function lineColor(element, color) {
+  console.log(color);
+  return {
+    updateLineProperties: {
+      objectId: element.objectId,
+      fields: "lineFill.solidFill.color",
+      lineProperties: {
+        lineFill: {
+          solidFill: color
+        }
+      }
+    }
+  };
+}
+
 function textColor(element, color) {
-  console.log("color: ");
-  console.log(color.rgbColor);
   return {
     updateTextStyle: {
       objectId: element.objectId,
-      fields: "*",
+      fields: "foregroundColor.opaqueColor.rgbColor",
       style: {
         foregroundColor: {
           opaqueColor: {
@@ -215,7 +241,6 @@ function parseDescription(description) {
 }
 
 function parseColor(color) {
-  console.log(color);
   var validateColor = false;
   var alpha = 1;
   if (color.startsWith("#")) {
