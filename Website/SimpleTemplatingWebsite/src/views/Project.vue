@@ -305,6 +305,7 @@ export default {
       lastGenerated: null,
       projectname: null,
       dialog: false,
+      valid: true,
       nameRules: [
         v => !!v || "Name is required",
         v => (v && v.length <= 30) || "Name must be less than 30 characters"

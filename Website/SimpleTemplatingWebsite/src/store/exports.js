@@ -21,7 +21,6 @@ const getters = {
 const actions = {
   // push history
   push: function({ rootGetters }, payload) {
-    console.log(payload);
     firebase.db
       .collection("users")
       .doc(rootGetters["user/user"].id)
