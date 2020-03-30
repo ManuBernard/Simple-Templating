@@ -133,6 +133,13 @@ function replaceColors(slide, line, requests) {
               requests.push(borderColor(element, color));
             }
           }
+
+          if (command.key == "text-color") {
+            var color = parseColor(line[command.value]);
+            if (color) {
+              requests.push(textColor(element, color));
+            }
+          }
         }
       });
     }
@@ -166,6 +173,24 @@ function borderColor(element, color) {
         outline: {
           outlineFill: {
             solidFill: color
+          }
+        }
+      }
+    }
+  };
+}
+
+function textColor(element, color) {
+  console.log("color: ");
+  console.log(color.rgbColor);
+  return {
+    updateTextStyle: {
+      objectId: element.objectId,
+      fields: "*",
+      style: {
+        foregroundColor: {
+          opaqueColor: {
+            rgbColor: color.color.rgbColor
           }
         }
       }
@@ -216,7 +241,7 @@ function parseColor(color) {
           green: validateColor.green / 256
         }
       },
-      alpha: parseFloat(alpha)
+      alpha: parseFloat(1)
     };
   } else {
     return false;
