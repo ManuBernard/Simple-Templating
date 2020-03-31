@@ -5,7 +5,6 @@ let project = null;
 let callback = null;
 let newfile = null;
 let sheetdata = null;
-let properties = [];
 
 export function templetify(p, count, c) {
   project = p;
@@ -19,23 +18,13 @@ export function templetify(p, count, c) {
     },
     function(data) {
       newfile = data;
-
-      callback(data);
-      getData();
+      readDatabase(project.database.id, createSlides);
     }
   );
 }
 
-function getData() {
-  readDatabase(project.database.id, createSlides);
-}
-
 function createSlides(data) {
   sheetdata = data;
-
-  for (var name in sheetdata[0]) {
-    properties.push(name);
-  }
 
   window.gapi.client.slides.presentations
     .get({
@@ -44,7 +33,7 @@ function createSlides(data) {
     .then(function(response) {
       var requests = [];
 
-      var countindex = 0;
+      var countindex = 1;
 
       // duplicate templates for each lines
       sheetdata.forEach((line, linecount) => {
@@ -68,8 +57,6 @@ function createSlides(data) {
           dpr.duplicateObject.objectIds[
             response.result.slides[modelId].objectId
           ] = "slide_" + countindex + "_line_" + linecount;
-
-          console.log(countindex);
 
           requests.push(dpr);
 
@@ -113,12 +100,12 @@ function replaceContent() {
     .then(function(response) {
       var requests = [];
       response.result.slides.forEach((slide, index) => {
-        console.log(slide);
         var lineIndex = parseInt(slide.objectId.split("_line_")[1]);
         slide.line = sheetdata[lineIndex];
 
         requests = replaceText(slide, requests);
         requests = replaceColors(slide, requests);
+        requests = replaceImages(slide, requests);
       });
 
       window.gapi.client.slides.presentations
@@ -126,7 +113,9 @@ function replaceContent() {
           presentationId: newfile.id,
           requests: requests
         })
-        .then(createSlideResponse => {});
+        .then(createSlideResponse => {
+          callback(newfile);
+        });
     });
 }
 
@@ -151,25 +140,37 @@ function replaceColors(slide, requests) {
     if (element.description) {
       var commands = parseDescription(element.description);
       commands.forEach(command => {
-        if (slide.line[command.value]) {
-          var color = parseColor(slide.line[command.value]);
-
-          if (command.key == "background-color" && element.shape && color) {
+        var color = parseColor(slide.line[command.value]);
+        if (slide.line[command.value] && color) {
+          if (command.key == "background-color" && element.shape) {
             requests.push(backgroundColor(element, color));
           }
 
-          if (command.key == "border-color" && element.shape && color) {
+          if (command.key == "border-color" && element.shape) {
             requests.push(borderColor(element, color));
           }
 
-          if (command.key == "text-color" && element.shape && color) {
+          if (command.key == "text-color" && element.shape) {
             requests.push(textColor(element, color));
           }
 
-          if (command.key == "line-color" && element.line && color) {
+          if (command.key == "line-color" && element.line) {
             requests.push(lineColor(element, color));
           }
+        }
+      });
+    }
+  });
 
+  return requests;
+}
+
+function replaceImages(slide, requests) {
+  slide.pageElements.forEach(element => {
+    if (element.description) {
+      var commands = parseDescription(element.description);
+      commands.forEach(command => {
+        if (slide.line[command.value]) {
           if (command.key == "image" && element.image) {
             var imageRequest = replaceImage(element, slide.line[command.value]);
             if (imageRequest) {
