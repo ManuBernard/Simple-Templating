@@ -44,12 +44,43 @@ function createSlides(data) {
     .then(function(response) {
       var requests = [];
 
+      var countindex = 0;
+
       // duplicate templates for each lines
-      sheetdata.forEach(line => {
-        requests.push({
-          duplicateObject: {
-            objectId: response.result.slides[0].objectId
-          }
+      sheetdata.forEach((line, linecount) => {
+        var modelIDs = [];
+
+        if (line.st_model) {
+          modelIDs = line.st_model.split(",");
+        } else {
+          modelIDs.push(1);
+        }
+
+        modelIDs.forEach(function(modelId) {
+          modelId = parseInt(modelId) - 1;
+          var dpr = {
+            duplicateObject: {
+              objectId: response.result.slides[modelId].objectId,
+              objectIds: {}
+            }
+          };
+
+          dpr.duplicateObject.objectIds[
+            response.result.slides[modelId].objectId
+          ] = "slide_" + countindex + "_line_" + linecount;
+
+          console.log(countindex);
+
+          requests.push(dpr);
+
+          requests.push({
+            updateSlidesPosition: {
+              slideObjectIds: ["slide_" + countindex + "_line_" + linecount],
+              insertionIndex: countindex + response.result.slides.length
+            }
+          });
+
+          countindex++;
         });
       });
 
@@ -82,10 +113,12 @@ function replaceContent() {
     .then(function(response) {
       var requests = [];
       response.result.slides.forEach((slide, index) => {
-        const line = sheetdata[index];
+        console.log(slide);
+        var lineIndex = parseInt(slide.objectId.split("_line_")[1]);
+        slide.line = sheetdata[lineIndex];
 
-        requests = replaceText(slide, line, requests);
-        requests = replaceColors(slide, line, requests);
+        requests = replaceText(slide, requests);
+        requests = replaceColors(slide, requests);
       });
 
       window.gapi.client.slides.presentations
@@ -97,8 +130,8 @@ function replaceContent() {
     });
 }
 
-function replaceText(slide, line, requests) {
-  for (let [key, value] of Object.entries(line)) {
+function replaceText(slide, requests) {
+  for (let [key, value] of Object.entries(slide.line)) {
     requests.push({
       replaceAllText: {
         replaceText: value,
@@ -113,48 +146,38 @@ function replaceText(slide, line, requests) {
   return requests;
 }
 
-function replaceColors(slide, line, requests) {
+function replaceColors(slide, requests) {
   slide.pageElements.forEach(element => {
-    console.log(element);
     if (element.description) {
       var commands = parseDescription(element.description);
-
       commands.forEach(command => {
-        if (line[command.value]) {
-          if (element.shape) {
-            if (command.key == "background-color") {
-              var color = parseColor(line[command.value]);
-              if (color) {
-                requests.push(backgroundColor(element, color));
-              }
-            }
+        if (slide.line[command.value]) {
+          var color = parseColor(slide.line[command.value]);
 
-            if (command.key == "border-color") {
-              var color = parseColor(line[command.value]);
-              if (color) {
-                requests.push(borderColor(element, color));
-              }
-            }
-
-            if (command.key == "text-color") {
-              var color = parseColor(line[command.value]);
-              if (color) {
-                requests.push(textColor(element, color));
-              }
-            }
+          if (command.key == "background-color" && element.shape && color) {
+            requests.push(backgroundColor(element, color));
           }
-          if (element.line) {
-            if (command.key == "line-color") {
-              var color = parseColor(line[command.value]);
-              if (color) {
-                requests.push(lineColor(element, color));
-              }
+
+          if (command.key == "border-color" && element.shape && color) {
+            requests.push(borderColor(element, color));
+          }
+
+          if (command.key == "text-color" && element.shape && color) {
+            requests.push(textColor(element, color));
+          }
+
+          if (command.key == "line-color" && element.line && color) {
+            requests.push(lineColor(element, color));
+          }
+
+          if (command.key == "image" && element.image) {
+            var imageRequest = replaceImage(element, slide.line[command.value]);
+            if (imageRequest) {
+              requests.push(imageRequest);
             }
           }
         }
       });
-    }
-    if (element.shape && element.description) {
     }
   });
 
@@ -194,7 +217,6 @@ function borderColor(element, color) {
 }
 
 function lineColor(element, color) {
-  console.log(color);
   return {
     updateLineProperties: {
       objectId: element.objectId,
@@ -206,6 +228,27 @@ function lineColor(element, color) {
       }
     }
   };
+}
+
+function replaceImage(element, image) {
+  if (image.indexOf("drive.google.com") > -1) {
+    var id = image.split("?id=")[1];
+    image = "https://docs.google.com/uc?id=" + id;
+  }
+  if (image.startsWith("http")) {
+    return {
+      replaceImage: {
+        imageObjectId: element.objectId,
+        url: image
+      }
+    };
+  } else {
+    return {
+      deleteObject: {
+        objectId: element.objectId
+      }
+    };
+  }
 }
 
 function textColor(element, color) {
