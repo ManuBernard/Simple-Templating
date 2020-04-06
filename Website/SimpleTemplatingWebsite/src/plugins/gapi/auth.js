@@ -1,5 +1,6 @@
 import Vue from "vue";
 import store from "@/store/store";
+let onSignInCallback = null;
 
 // Client ID and API key from the Developer Console
 var CLIENT_ID =
@@ -10,7 +11,7 @@ var API_KEY = "AIzaSyDj7SLv5PK6SyHzSVZVdmLeMV5eJILEN58";
 var DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
   "https://sheets.googleapis.com/$discovery/rest?version=v4",
-  "https://slides.googleapis.com/$discovery/rest?version=v1"
+  "https://slides.googleapis.com/$discovery/rest?version=v1",
 ];
 
 // Authorization scopes required by the API; multiple scopes can be
@@ -21,7 +22,8 @@ var SCOPES =
 /**
  *  On load, called to load the auth2 library and API client library.
  */
-function handleClientLoad() {
+function handleClientLoad(callback) {
+  onSignInCallback = callback;
   gapi.load("client:auth2", initClient);
   gapi.load("picker");
 }
@@ -38,7 +40,7 @@ function initClient() {
       apiKey: API_KEY,
       clientId: CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES
+      scope: SCOPES,
     })
     .then(
       function() {
@@ -48,7 +50,7 @@ function initClient() {
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
       },
       function(error) {
-        appendPre(JSON.stringify(error, null, 2));
+        //   appendPre(JSON.stringify(error, null, 2));
       }
     );
 }
@@ -68,10 +70,13 @@ function updateSigninStatus(isSignedIn) {
       id: profile.getId(),
       name: profile.getName(),
       email: profile.getEmail(),
-      image: profile.getImageUrl()
+      image: profile.getImageUrl(),
     });
+
+    onSignInCallback();
   } else {
     store.dispatch("user/signout", {});
+    onSignInCallback();
   }
 }
 

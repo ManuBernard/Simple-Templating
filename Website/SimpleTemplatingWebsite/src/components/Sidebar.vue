@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-list dense>
-      <v-list-item link @click="$router.push('/projects')">
+      <v-list-item
+        link
+        @click="$router.push('/')"
+      >
         <v-list-item-action>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-action>
@@ -9,19 +12,16 @@
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item link>
-        <v-list-item-action>
-          <v-icon>mdi-settings</v-icon>
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>Settings</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+
     </v-list>
 
     <v-list dense>
-      <v-list-item >
-        <v-btn small color="primary" @click="newproject">New project</v-btn>
+      <v-list-item>
+        <v-btn
+          small
+          color="primary"
+          @click="newproject"
+        >New project</v-btn>
       </v-list-item>
       <v-list-item
         link
@@ -38,35 +38,35 @@
       </v-list-item>
     </v-list>
   </div>
-  </template>
+</template>
 
   <script>
-    export default {
+export default {
 
-      computed: {
-        user() {
-          return this.$store.getters["user/user"];
-        },
-        projects() {
-          return this.$store.getters["projects/projects"];
-        }
-      },
+  computed: {
+    user () {
+      return this.$store.getters["user/user"];
+    },
+    projects () {
+      return this.$store.getters["projects/projects"];
+    }
+  },
 
-      data() {
-        return{}
-      },
+  data () {
+    return {}
+  },
 
-      methods: {
-        select(project) {
-          this.$router.push("/project/" + project.id);
-          // this.$store.dispatch("projects/select", project);
-        },
+  methods: {
+    select (project) {
+      this.$router.push("/project/" + project.id);
+      // this.$store.dispatch("projects/select", project);
+    },
 
-        newproject() {
-           this.$router.push("/newproject/");
-        }
-      },
-      created() {}
-    };
+    newproject () {
+      this.$router.push("/newproject/");
+    }
+  },
+  created () { }
+};
   </script>
 </template>

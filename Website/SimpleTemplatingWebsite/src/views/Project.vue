@@ -1,20 +1,8 @@
 <template>
   <div v-if="project">
-    <!-- <v-breadcrumbs
-  :items="breadcrumbsitems"
-  divider="/"
->
-  <template v-slot:item="{ item }">
-    <v-breadcrumbs-item
-      @click.prevent="$router.push(item.href)"
-      :disabled="item.disabled"
-    >
-      {{ item.text.toUpperCase() }}
-    </v-breadcrumbs-item>
-  </template>
-</v-breadcrumbs> -->
 
     <v-container fluid>
+
       <v-toolbar flat>
         <v-toolbar-title class="headline">
           <span class="font-weight-thin">The</span> {{ project.name }}
@@ -29,15 +17,7 @@
             <v-icon>mdi-pencil-outline</v-icon>
           </v-btn>
         </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn
-          target="_blank"
-          color="secondary"
-          outlined
-          href="http://simpletemplating.com/documentation/"
-        >
-          Documentation <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
-        </v-btn>
+
       </v-toolbar>
       <v-row>
         <v-col>
@@ -130,43 +110,40 @@
         </v-col>
       </v-row>
 
-      <v-toolbar
-        class="my-2"
-        flat
+      <v-row
+        align="center"
+        justify="center"
       >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col></v-col>
-          <v-col class="text-center">
-            <v-btn
-              x-large
-              color="primary"
-              @click="templetify"
-            >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
-            </v-btn>
-          </v-col>
-          <v-col class="text-right">
-            <v-btn
-              outlined
-              color="primary"
-              target="_blank"
-              class="mr-1 ml-2"
-              :href="
+
+        <v-col class="text-left">
+          <v-btn
+            icon
+            color="secondary"
+            @click="selectFolder"
+          >
+            <v-icon>mdi-settings</v-icon>
+          </v-btn>
+          Output folder:
+          <v-btn
+            text
+            color="primary"
+            target="_blank"
+            class=""
+            :href="
                 'https://docs.google.com/drive/u/0/folders/' + project.folder.id
               "
-            >Output: {{ project.folder.name }}</v-btn>
-            <v-btn
-              icon
-              color="secondary"
-              @click="selectFolder"
-            >
-              <v-icon>mdi-settings</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-toolbar>
+          >{{ project.folder.name }}</v-btn>
+
+        </v-col>
+        <v-col class="text-right">
+          <v-btn
+            x-large
+            color="primary"
+            @click="templetify"
+          >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
       <v-data-table
         :headers="headers"
@@ -470,7 +447,7 @@ export default {
     },
     removeProject () {
       this.$store.dispatch("projects/remove", this.project);
-      this.$router.push("/projects/");
+      this.$router.push("/");
     }
   },
   mounted () {

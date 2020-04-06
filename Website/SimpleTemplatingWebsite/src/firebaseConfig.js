@@ -10,7 +10,7 @@ const config = {
   storageBucket: "simple-templating-sheet2slide.appspot.com",
   messagingSenderId: "543570048454",
   appId: "1:543570048454:web:69d41b9206b22bc076aec7",
-  measurementId: "G-GN7EBJJPDH"
+  measurementId: "G-GN7EBJJPDH",
 };
 firebase.initializeApp(config);
 
@@ -36,5 +36,5 @@ export {
   usersCollection,
   postsCollection,
   commentsCollection,
-  likesCollection
+  likesCollection,
 };

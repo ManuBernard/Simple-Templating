@@ -3,15 +3,15 @@ import {
   filePicker,
   duplicateFile,
   createFile,
-  createNewProject
+  createNewProject,
 } from "./drive";
 import { readDatabase } from "./spreadsheets";
 import { templetify } from "./presentations";
 const api = {
   install(Vue) {
     Vue.prototype.$gapi = {
-      init: function() {
-        handleClientLoad();
+      init: function(cb) {
+        handleClientLoad(cb);
       },
       signin: function() {
         window.gapi.auth2.getAuthInstance().signIn();
@@ -24,9 +24,9 @@ const api = {
       duplicateFile: duplicateFile,
       readDatabase: readDatabase,
       createNewProject: createNewProject,
-      templetify: templetify
+      templetify: templetify,
     };
-  }
+  },
 };
 
 export default api;

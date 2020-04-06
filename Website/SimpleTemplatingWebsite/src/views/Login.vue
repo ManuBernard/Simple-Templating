@@ -3,22 +3,28 @@
     class="fill-height"
     fluid
   >
+
     <v-row
       justify="center"
       align="center"
     >
       <v-col>
-        <h1>Please login to your Google Account</h1>
-        <v-btn
-          color=primary
-          @click=signin
-        >Signin</v-btn>
-        <!-- <google-signin-btn
-          label="Sign In"
-          customClass="my-button"
-          @click="login"
+        <v-card
+          flat
+          max-width="300"
+          class="mx-auto text-center"
         >
-        </google-signin-btn> -->
+          <h1>Get started</h1>
+
+          <v-img
+            @click=signin
+            :src="require('../assets/signin.png')"
+            class="mt-3 mb-10"
+            contain
+          />
+          Back to <a href="https://simpletemplating.com">Simple templating</a>
+        </v-card>
+
       </v-col>
     </v-row>
   </v-container>
