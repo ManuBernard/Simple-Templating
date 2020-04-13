@@ -405,16 +405,17 @@ export default {
     },
 
     selectDatabase () {
+      var self = this;
       this.$gapi.filePicker("SPREADSHEETS", function (database) {
         var payload = {
-          project: this.project,
+          project: self.project,
           database: {
             id: database.id,
             name: database.name
           }
         };
 
-        this.$store.dispatch("projects/addDatabase", payload);
+        self.$store.dispatch("projects/addDatabase", payload);
       });
     },
 

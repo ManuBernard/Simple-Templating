@@ -143,7 +143,7 @@ export default {
   mounted () {
     let self = this;
     this.$gapi.init(function () {
-
+      console.log('app mounteds');
       self.loaded = true;
     });
   }

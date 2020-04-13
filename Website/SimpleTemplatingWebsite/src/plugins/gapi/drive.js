@@ -102,8 +102,8 @@ export function filePicker(type, callback) {
   function cb(data) {
     callback(data.docs[0]);
   }
-
-  var token = window.gapi.auth2.getAuthInstance().currentUser.je.uc
+  console.log(window.gapi.auth2.getAuthInstance().currentUser.get());
+  var token = window.gapi.auth2.getAuthInstance().currentUser.get().tc
     .access_token;
 
   var view = new window.google.picker.DocsView(

@@ -23,9 +23,10 @@ var SCOPES =
  *  On load, called to load the auth2 library and API client library.
  */
 function handleClientLoad(callback) {
+  console.log("handleClientLoad");
   onSignInCallback = callback;
-  gapi.load("client:auth2", initClient);
-  gapi.load("picker");
+  window.gapi.load("client:auth2", initClient);
+  window.gapi.load("picker");
 }
 
 // handleClientLoad();
@@ -35,7 +36,8 @@ function handleClientLoad(callback) {
  *  listeners.
  */
 function initClient() {
-  gapi.client
+  console.log("init client");
+  window.gapi.client
     .init({
       apiKey: API_KEY,
       clientId: CLIENT_ID,
@@ -44,12 +46,18 @@ function initClient() {
     })
     .then(
       function() {
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
+        window.gapi.auth2
+          .getAuthInstance()
+          .isSignedIn.listen(updateSigninStatus);
+        console.log("initClient cb success");
         // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        updateSigninStatus(
+          window.gapi.auth2.getAuthInstance().isSignedIn.get()
+        );
       },
       function(error) {
+        console.log("initClient cb error");
+        console.log(error);
         //   appendPre(JSON.stringify(error, null, 2));
       }
     );
@@ -60,8 +68,9 @@ function initClient() {
  *  appropriately. After a sign-in, the API is called.
  */
 function updateSigninStatus(isSignedIn) {
+  console.log("updateSigninStatus");
   if (isSignedIn) {
-    var profile = gapi.auth2
+    var profile = window.gapi.auth2
       .getAuthInstance()
       .currentUser.get()
       .getBasicProfile();
