@@ -1,17 +1,15 @@
-import Vue from "vue";
 import store from "@/store/store";
 let onSignInCallback = null;
 
 // Client ID and API key from the Developer Console
-var CLIENT_ID =
-  "543570048454-tblderg0v6u4bm9e5jtdk07lh0la85hi.apps.googleusercontent.com";
-var API_KEY = "AIzaSyDj7SLv5PK6SyHzSVZVdmLeMV5eJILEN58";
+var CLIENT_ID = process.env.VUE_APP_CLIENT_ID;
+var API_KEY = process.env.VUE_APP_API_KEY;
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
   "https://sheets.googleapis.com/$discovery/rest?version=v4",
-  "https://slides.googleapis.com/$discovery/rest?version=v1",
+  "https://slides.googleapis.com/$discovery/rest?version=v1"
 ];
 
 // Authorization scopes required by the API; multiple scopes can be
@@ -23,7 +21,6 @@ var SCOPES =
  *  On load, called to load the auth2 library and API client library.
  */
 function handleClientLoad(callback) {
-  console.log("handleClientLoad");
   onSignInCallback = callback;
   window.gapi.load("client:auth2", initClient);
   window.gapi.load("picker");
@@ -36,30 +33,25 @@ function handleClientLoad(callback) {
  *  listeners.
  */
 function initClient() {
-  console.log("init client");
   window.gapi.client
     .init({
       apiKey: API_KEY,
       clientId: CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES,
+      scope: SCOPES
     })
     .then(
       function() {
         window.gapi.auth2
           .getAuthInstance()
           .isSignedIn.listen(updateSigninStatus);
-        console.log("initClient cb success");
+
         // Handle the initial sign-in state.
         updateSigninStatus(
           window.gapi.auth2.getAuthInstance().isSignedIn.get()
         );
       },
-      function(error) {
-        console.log("initClient cb error");
-        console.log(error);
-        //   appendPre(JSON.stringify(error, null, 2));
-      }
+      function(error) {}
     );
 }
 
@@ -68,7 +60,6 @@ function initClient() {
  *  appropriately. After a sign-in, the API is called.
  */
 function updateSigninStatus(isSignedIn) {
-  console.log("updateSigninStatus");
   if (isSignedIn) {
     var profile = window.gapi.auth2
       .getAuthInstance()
@@ -79,7 +70,7 @@ function updateSigninStatus(isSignedIn) {
       id: profile.getId(),
       name: profile.getName(),
       email: profile.getEmail(),
-      image: profile.getImageUrl(),
+      image: profile.getImageUrl()
     });
 
     onSignInCallback();

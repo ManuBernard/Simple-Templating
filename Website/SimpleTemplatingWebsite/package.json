@@ -1,6 +1,6 @@
 {
-  "name": "SimpleTemplatingWebsite",
-  "version": "0.1.0",
+  "name": "SimpleTemplating",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

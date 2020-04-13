@@ -3,7 +3,7 @@ import {
   filePicker,
   duplicateFile,
   createFile,
-  createNewProject,
+  createNewProject
 } from "./drive";
 import { readDatabase } from "./spreadsheets";
 import { templetify } from "./presentations";
@@ -24,9 +24,9 @@ const api = {
       duplicateFile: duplicateFile,
       readDatabase: readDatabase,
       createNewProject: createNewProject,
-      templetify: templetify,
+      templetify: templetify
     };
-  },
+  }
 };
 
 export default api;
