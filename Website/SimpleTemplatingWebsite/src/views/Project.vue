@@ -1,146 +1,60 @@
 <template>
   <div v-if="project">
-
     <v-container fluid>
-
       <v-toolbar flat>
         <v-toolbar-title class="headline">
           <span class="font-weight-thin">The</span> {{ project.name }}
           <span class="font-weight-thin">project</span>
 
-          <v-btn
-            icon
-            class="ml-1"
-            color="secondary"
-            @click.stop="showRenamer"
-          >
+          <v-btn icon class="ml-1" color="secondary" @click.stop="showRenamer">
             <v-icon>mdi-pencil-outline</v-icon>
           </v-btn>
         </v-toolbar-title>
-
       </v-toolbar>
       <v-row>
         <v-col>
-          <v-card class="px-4 py-4">
-            <v-card-title class="justify-center">
-              <a
-                target="_blank"
-                :href="
-                  'https://docs.google.com/spreadsheets/d/' +
-                    project.database.id +
-                    '/edit'
-                "
-              >
-                <v-img
-                  contain
-                  :src="require('../assets/sheets.png')"
-                  max-width="128"
-                />
-              </a>
-            </v-card-title>
-
-            <v-card-title class="headline justify-center">
-              <v-btn
-                outlined
-                target="_blank"
-                color="primary"
-                :href="
-                  'https://docs.google.com/spreadsheets/d/' +
-                    project.database.id +
-                    '/edit'
-                "
-              >{{ project.database.name }}</v-btn>
-            </v-card-title>
-
-            <v-card-actions class="justify-center">
-              <v-spacer></v-spacer>
-              <v-btn
-                text
-                color="secondary"
-                @click="selectDatabase"
-              >Change file</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
+          <project-file-picker
+            :type="'database'"
+            :file="project.database"
+            @select="selectDatabase"
+          ></project-file-picker>
         </v-col>
 
         <v-col>
-          <v-card class="px-4 py-4">
-            <v-card-title class="justify-center">
-              <a
-                target="_blank"
-                :href="
-                  'https://docs.google.com/presentation/d/' +
-                    project.template.id +
-                    '/edit'
-                "
-              >
-                <v-img
-                  contain
-                  :src="require('../assets/slides.png')"
-                  max-width="128"
-                />
-              </a>
-            </v-card-title>
-
-            <v-card-title class="headline justify-center">
-              <v-btn
-                outlined
-                target="_blank"
-                color="primary"
-                :href="
-                  'https://docs.google.com/presentation/d/' +
-                    project.template.id +
-                    '/edit'
-                "
-              >{{ project.template.name }}</v-btn>
-            </v-card-title>
-
-            <v-card-actions class="justify-center">
-              <v-spacer></v-spacer>
-              <v-btn
-                text
-                color="secondary"
-                @click="selectTemplate"
-              >Change file
-              </v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
+          <project-file-picker
+            :type="'template'"
+            :file="project.template"
+            @select="selectTemplate"
+          ></project-file-picker>
         </v-col>
       </v-row>
 
-      <v-row
-        align="center"
-        justify="center"
-      >
-
+      <v-row align="center" justify="center">
         <v-col class="text-left">
-          <v-btn
-            icon
-            color="secondary"
-            @click="selectFolder"
-          >
-            <v-icon>mdi-settings</v-icon>
-          </v-btn>
-          Output folder:
-          <v-btn
-            text
-            color="primary"
-            target="_blank"
-            class=""
-            :href="
+          <template v-if="project.folder">
+            <v-btn icon color="secondary" @click="selectFolder">
+              <v-icon>mdi-settings</v-icon>
+            </v-btn>
+            Output folder:
+            <v-btn
+              text
+              color="primary"
+              target="_blank"
+              class=""
+              :href="
                 'https://docs.google.com/drive/u/0/folders/' + project.folder.id
               "
-          >{{ project.folder.name }}</v-btn>
-
+            >
+              {{ project.folder.name }}
+            </v-btn>
+          </template>
+          <v-btn color="primary" outlined @click="selectFolder" v-else>
+            <v-icon class="mr-3">mdi-settings</v-icon> Select export folder
+          </v-btn>
         </v-col>
         <v-col class="text-right">
-          <v-btn
-            x-large
-            color="primary"
-            @click="templetify"
-          >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
+          <v-btn x-large color="primary" @click="templetify"
+            >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -152,23 +66,15 @@
         class="elevation-1"
       >
         <template v-slot:item.link="{ item }">
-          <v-btn
-            outlined
-            target="_blank"
-            color="primary"
-            :href="item.link"
-          >View
+          <v-btn outlined target="_blank" color="primary" :href="item.link"
+            >View
           </v-btn>
-        </template></v-data-table>
+        </template></v-data-table
+      >
       <v-toolbar flat>
         <v-spacer></v-spacer>
         <div v-if="!remove">
-          <v-btn
-            outlined
-            tile
-            color="error"
-            @click="remove = true"
-          >
+          <v-btn outlined tile color="error" @click="remove = true">
             Remove project
           </v-btn>
         </div>
@@ -182,22 +88,14 @@
           >
             Cancel
           </v-btn>
-          <v-btn
-            outlined
-            tile
-            color="error"
-            @click="removeProject"
-          >
+          <v-btn outlined tile color="error" @click="removeProject">
             Confirm remove project
           </v-btn>
         </div>
       </v-toolbar>
     </v-container>
     <v-overlay v-if="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      ></v-progress-circular>
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
 
     <v-overlay
@@ -212,41 +110,22 @@
         {{ lastGenerated.name }} has been freshly generated
       </h2>
 
-      <v-btn
-        @click="openLastGenerated"
-        x-large
-        class="mr-4"
-      >
+      <v-btn @click="openLastGenerated" x-large class="mr-4">
         Open it
       </v-btn>
-      <v-btn
-        @click="lastGenerated = null"
-        fab
-        text
-        x-large
-      >
+      <v-btn @click="lastGenerated = null" fab text x-large>
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-overlay>
 
-    <v-dialog
-      v-model="dialog"
-      width="500"
-    >
+    <v-dialog v-model="dialog" width="500">
       <v-card>
-        <v-card-title
-          class="headline grey lighten-2"
-          primary-title
-        >
+        <v-card-title class="headline grey lighten-2" primary-title>
           Rename project
         </v-card-title>
 
         <v-card-text>
-          <v-form
-            ref="form"
-            v-model="valid"
-            @submit.prevent="savename"
-          >
+          <v-form ref="form" v-model="valid" @submit.prevent="savename">
             <v-text-field
               v-model="projectname"
               :counter="30"
@@ -270,11 +149,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="secondary"
-            text
-            @click="dialog = false"
-          >
+          <v-btn color="secondary" text @click="dialog = false">
             Close
           </v-btn>
         </v-card-actions>
@@ -286,23 +161,15 @@
 <script>
 export default {
   computed: {
-    project () {
+    project() {
       return this.$store.getters["projects/byId"](this.$route.params.id);
     },
 
-    exports () {
+    exports() {
       return this.$store.getters["exports/exports"];
     },
-    formatedExports () {
+    formatedExports() {
       var ret = [];
-      // const options = {
-      //   weekday: "long",
-      //   year: "numeric",
-      //   month: "long",
-      //   day: "numeric"
-      // };
-
-      // .toLocaleDateString('en-US', options)
 
       this.exports.forEach(exp => {
         ret.push({
@@ -312,29 +179,10 @@ export default {
         });
       });
       return ret;
-    },
-    breadcrumbsitems () {
-      return [
-        {
-          text: "Dashboard",
-          disabled: false,
-          href: "/dashboard/"
-        },
-        {
-          text: "Projects",
-          disabled: false,
-          href: "/projects/"
-        },
-        {
-          text: this.project.name,
-          disabled: true,
-          href: "/project/" + this.project.id
-        }
-      ];
     }
   },
 
-  data () {
+  data() {
     return {
       remove: false,
       loading: false,
@@ -360,33 +208,32 @@ export default {
   },
 
   methods: {
-    showRenamer () {
+    showRenamer() {
       this.dialog = true;
       this.projectname = this.project.name;
     },
-    savename () {
+
+    savename() {
       this.dialog = false;
       this.$store.dispatch("projects/update", {
         id: this.project.id,
         name: this.projectname
       });
     },
-    templetify () {
+
+    templetify() {
       var self = this;
       this.loading = true;
 
-
-
-
-      this.$gapi.templetify(this.project, self.exports.length + 1, function (
+      this.$gapi.templetify(this.project, self.exports.length + 1, function(
         data
       ) {
         data.project = self.project;
-        data.callback = function (exportFile) {
+        data.callback = function(exportFile) {
           var sound = require("../assets/success.mp3");
           var audio = new Audio(sound);
           audio.play();
-          window.setTimeout(function () {
+          window.setTimeout(function() {
             self.loading = false;
             self.lastGenerated = exportFile;
           }, 1000);
@@ -395,18 +242,18 @@ export default {
       });
     },
 
-    openLastGenerated: function () {
+    openLastGenerated: function() {
       window.open(
         "https://docs.google.com/presentation/d/" +
-        this.lastGenerated.id +
-        "/edit"
+          this.lastGenerated.id +
+          "/edit"
       );
       this.lastGenerated = null;
     },
 
-    selectDatabase () {
+    selectDatabase() {
       var self = this;
-      this.$gapi.filePicker("SPREADSHEETS", function (database) {
+      this.$gapi.filePicker("SPREADSHEETS", function(database) {
         var payload = {
           project: self.project,
           database: {
@@ -419,11 +266,11 @@ export default {
       });
     },
 
-    selectTemplate () {
+    selectTemplate() {
       var self = this;
       this.$gapi.filePicker("PRESENTATIONS", cb);
 
-      function cb (data) {
+      function cb(data) {
         var payload = {
           project: self.project,
           template: data
@@ -433,11 +280,11 @@ export default {
       }
     },
 
-    selectFolder () {
+    selectFolder() {
       var self = this;
       this.$gapi.filePicker("FOLDERS", cb);
 
-      function cb (data) {
+      function cb(data) {
         var payload = {
           project: self.project,
           folder: data
@@ -446,25 +293,15 @@ export default {
         self.$store.dispatch("projects/addFolder", payload);
       }
     },
-    removeProject () {
+    removeProject() {
       this.$store.dispatch("projects/remove", this.project);
       this.$router.push("/");
     }
   },
-  mounted () {
+  mounted() {
     this.$store.dispatch("exports/bind", this.$route.params.id);
   }
 };
 </script>
-<style>
-.list-item {
-}
-.list-enter-active,
-.list-leave-active {
-  transition: all 1s;
-}
-.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
-  opacity: 0;
-  transform: translateY(-30px);
-}
-</style>
+
+<style></style>

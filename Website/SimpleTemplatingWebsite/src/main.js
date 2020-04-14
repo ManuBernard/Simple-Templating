@@ -5,11 +5,9 @@ import store from "./store/store";
 import vuetify from "./plugins/vuetify";
 import gapi from "./plugins/gapi/init";
 
-import Icon from "vue-awesome/components/Icon";
-
 const firebase = require("./firebaseConfig.js");
 
-Vue.component("v-icon", Icon);
+// Vue.component("v-icon", Icon);
 Vue.use(gapi);
 
 Vue.config.productionTip = false;

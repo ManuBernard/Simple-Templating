@@ -1,30 +1,5 @@
-// payload.type can be spreadsheet / presentation / folder
-// payload.parent must be an id
-
-const driveTemplateIds = {
-  default: {
-    template: "1ufrnbiGqqo2for8Oqtwm5K9OH_meIBihg7LZBdl24cY",
-    database: "1DOdWy4ldUtaoFSjCZKFWgrf8yXNQol4eKrdQRLNSE1g"
-  }
-};
-
-export function createFile(payload, callback) {
-  let createObject = {
-    name: payload.name,
-    mimeType: "application/vnd.google-apps." + payload.type,
-    fields: "id,name"
-  };
-
-  if (payload.parent) {
-    createObject.parents = [payload.parent];
-  }
-
-  window.gapi.client.drive.files.create(createObject).then(function(response) {
-    callback(response.result);
-  });
-}
-
 export function createNewProject(payload, callback) {
+  console.log(payload);
   let data = {
     folderRoot: null,
     database: null,
@@ -32,7 +7,7 @@ export function createNewProject(payload, callback) {
     folderExport: null
   };
 
-  // Create Folder
+  // Create project root folder
   createFile(
     {
       name: payload.name + " - Simple Templating Project",
@@ -45,7 +20,7 @@ export function createNewProject(payload, callback) {
       duplicateFile(
         {
           name: payload.name + " - Database",
-          fileId: driveTemplateIds.default.database,
+          fileId: payload.projectTemplate.database_id,
           parent: data.folderRoot.id
         },
         function(db) {
@@ -55,7 +30,7 @@ export function createNewProject(payload, callback) {
           duplicateFile(
             {
               name: payload.name + " - Template",
-              fileId: driveTemplateIds.default.template,
+              fileId: payload.projectTemplate.template_id,
               parent: data.folderRoot.id
             },
             function(tmpl) {
@@ -80,6 +55,25 @@ export function createNewProject(payload, callback) {
       );
     }
   );
+}
+
+// payload.type can be spreadsheet / presentation / folder
+// payload.parent must be an id
+
+export function createFile(payload, callback) {
+  let createObject = {
+    name: payload.name,
+    mimeType: "application/vnd.google-apps." + payload.type,
+    fields: "id,name"
+  };
+
+  if (payload.parent) {
+    createObject.parents = [payload.parent];
+  }
+
+  window.gapi.client.drive.files.create(createObject).then(function(response) {
+    callback(response.result);
+  });
 }
 
 export function duplicateFile(payload, callback) {
@@ -125,27 +119,3 @@ export function filePicker(type, callback) {
 
   picker.setVisible(true);
 }
-
-// export function createDb (name, callback) {
-//   window.gapi.client.drive.files
-//     .create({
-//       name: name + " - database",
-//       mimeType: "application/vnd.google-apps.spreadsheet",
-//       fields: "*"
-//     })
-//     .then(function (response) {
-//       callback(response.result);
-//     });
-// }
-
-// export function createFolder (name, callback) {
-//   window.gapi.client.drive.files
-//     .create({
-//       name: name + " - database",
-//       mimeType: "application/vnd.google-apps.spreadsheet",
-//       fields: "*"
-//     })
-//     .then(function (response) {
-//       callback(response.result);
-//     });
-// }
