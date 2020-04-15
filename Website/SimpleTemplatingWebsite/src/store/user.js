@@ -1,5 +1,3 @@
-import { vuexfireMutations, firestoreAction } from "vuexfire";
-
 const state = {
   user: null
 };

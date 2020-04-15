@@ -15,7 +15,7 @@
       </v-container>
     </template>
     <template v-else-if="user">
-      <v-app-bar dark app color="primary accent-4" clipped-left>
+      <v-app-bar dark app color="secondary accent-4" clipped-left>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-toolbar-title>{{ APP_NAME }}</v-toolbar-title>
 
@@ -51,12 +51,11 @@
         </v-menu>
       </v-app-bar>
 
-      <v-navigation-drawer v-model="drawer" app floating clipped>
+      <v-navigation-drawer v-model="drawer" app clipped>
         <sidebar :drawer="drawer"></sidebar>
       </v-navigation-drawer>
 
       <v-content class="fill-height">
-        <feedback></feedback>
         <transition name="fade" mode="out-in">
           <router-view :key="$route.fullPath"></router-view>
         </transition>

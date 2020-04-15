@@ -1,18 +1,18 @@
 <template>
   <div v-if="project">
     <v-container fluid>
-      <v-toolbar flat>
-        <v-toolbar-title class="headline">
+      <v-toolbar class="my-5" flat>
+        <v-toolbar-title class="display-1">
           <span class="font-weight-thin">The</span> {{ project.name }}
           <span class="font-weight-thin">project</span>
 
-          <v-btn icon class="ml-1" color="secondary" @click.stop="showRenamer">
+          <v-btn icon class="ml-1" color="primary" @click.stop="showRenamer">
             <v-icon>mdi-pencil-outline</v-icon>
           </v-btn>
         </v-toolbar-title>
       </v-toolbar>
-      <v-row>
-        <v-col>
+      <v-row class=" mx-5">
+        <v-col class="flex d-flex flex-column ">
           <project-file-picker
             :type="'database'"
             :file="project.database"
@@ -20,7 +20,7 @@
           ></project-file-picker>
         </v-col>
 
-        <v-col>
+        <v-col class=" flex d-flex flex-column ">
           <project-file-picker
             :type="'template'"
             :file="project.template"
@@ -29,10 +29,10 @@
         </v-col>
       </v-row>
 
-      <v-row align="center" justify="center">
+      <v-row align="center" justify="center" class=" mx-5">
         <v-col class="text-left">
           <template v-if="project.folder">
-            <v-btn icon color="secondary" @click="selectFolder">
+            <v-btn icon color="primary" @click="selectFolder">
               <v-icon>mdi-settings</v-icon>
             </v-btn>
             Output folder:

@@ -21,6 +21,7 @@ const actions = {
         .collection("config")
         .doc("project_templates")
         .collection("projects")
+        .orderBy("order")
     );
   })
 };

@@ -1,24 +1,18 @@
 <template>
   <v-container fluid>
-    <v-toolbar flat>
-      <v-toolbar-title class="headline">
-        Create a new project
+    <v-toolbar class="my-5" flat>
+      <v-toolbar-title class="display-1">
+        New project
       </v-toolbar-title>
     </v-toolbar>
 
-    <v-form
-      ref="form"
-      v-model="valid"
-      @submit.prevent="add"
-    >
-
-      <div class="text-center">
-        <v-card
-          max-width="500"
-          flat
-        >
+    <v-form ref="form" v-model="valid" @submit.prevent="add">
+      <div color="primary" class="text-center">
+        <v-card max-width="500" flat>
           <v-card-text>
             <v-text-field
+              outlined
+              autofocus
               v-model="projectname"
               :counter="30"
               :rules="nameRules"
@@ -31,33 +25,41 @@
 
       <v-toolbar flat>
         <v-toolbar-title class="headline">
-          Select a template for your project
+          Choose a template
         </v-toolbar-title>
       </v-toolbar>
 
-      <v-row>
+      <v-row class="mx-2">
         <v-col
-          sm=4
+          sm="4"
           v-for="projectTemplate in projectTemplates"
-          :key=projectTemplate.name
+          :key="projectTemplate.name"
+          class="pa-3 d-flex flex-column"
         >
           <v-card
-            :class="{ secondary: projectTemplate == selectedProjectTemplate }"
-            @click="selectedProjectTemplate=projectTemplate"
+            class="elevation-5 flex d-flex flex-column"
+            :dark="projectTemplate == selectedProjectTemplate"
+            :class="{ primary: projectTemplate == selectedProjectTemplate }"
+            @click="selectedProjectTemplate = projectTemplate"
           >
-            <v-card-text class="text-center headline">
-              {{projectTemplate.name}}
-            </v-card-text>
+            <v-card-title class="headline mb-1">
+              {{ projectTemplate.name }}</v-card-title
+            >
+            <v-card-text>{{ projectTemplate.description }}</v-card-text>
           </v-card>
         </v-col>
-        <v-col sm=4>
+        <v-col sm="4">
           <v-card
-            :class="{ secondary: 'blank' == selectedProjectTemplate }"
-            @click="selectedProjectTemplate='blank'"
+            class="elevation-5 flex d-flex flex-column"
+            :dark="'blank' == selectedProjectTemplate"
+            :class="{ primary: 'blank' == selectedProjectTemplate }"
+            @click="selectedProjectTemplate = 'blank'"
           >
-            <v-card-text class="text-center headline">
-              Blank project
-            </v-card-text>
+            <v-card-title class="headline mb-1"> Blank project</v-card-title>
+            <v-card-text
+              >No files will be generated. Pick existing files from your
+              Drive.</v-card-text
+            >
           </v-card>
         </v-col>
       </v-row>
@@ -69,45 +71,36 @@
         required
       ></v-text-field>
 
-      <v-toolbar
-        class="mt-10"
-        flat
-        primary
-      >
+      <v-toolbar class="mt-10" flat primary>
         <v-row>
-
           <v-col>
             <div v-if="selectedProjectTemplate == 'blank'">
-              Starting from a blank project, you will have to choose an existing database, template, and export folder. No file nor folder will be created.
+              Starting from a blank project, you will have to choose an existing
+              database, template, and export folder. No file nor folder will be
+              created.
             </div>
             <div v-else>
               <div v-if="!folderRoot">
                 By default, your project will be created at the root of your
-                Drive.<br>
-                <a
-                  color="primary"
-                  @click.prevent="selectFolder"
-                >
+                Drive.<br />
+                <a color="primary" @click.prevent="selectFolder">
                   Change location
                 </a>
               </div>
               <div v-else>
                 Output folder : {{ folderRoot.root }}
-                <a
-                  color="primary"
-                  @click.prevent="selectFolder"
-                >
+                <a color="primary" @click.prevent="selectFolder">
                   Change folder
                 </a>
               </div>
             </div>
-
           </v-col>
-          <v-col class='text-right'>
+          <v-col class="text-right">
             <v-btn
               :disabled="!valid"
-              color="success"
+              color="primary"
               class="mr-4"
+              x-large
               @click="add"
             >
               Create project
@@ -115,32 +108,25 @@
           </v-col>
         </v-row>
       </v-toolbar>
-
     </v-form>
 
     <v-overlay v-if="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      ></v-progress-circular>
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-
-    </v-row>
   </v-container>
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   computed: {
-    projectTemplates: function () {
-      return this.$store.getters['config/templates'];
+    projectTemplates: function() {
+      return this.$store.getters["config/templates"];
     }
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       projectname: null,
@@ -159,47 +145,39 @@ export default {
     };
   },
 
-  mounted () {
-
-  },
+  mounted() {},
 
   methods: {
-    selectFolder () {
+    selectFolder() {
       const self = this;
       this.$gapi.filePicker("FOLDERS", cb);
-      function cb (data) {
+      function cb(data) {
         self.folderRoot = data;
       }
     },
 
-    add () {
+    add() {
       const self = this;
       self.loading = true;
       var payload = {
         name: this.projectname,
-        projectTemplate: this.selectedProjectTemplate,
+        projectTemplate: this.selectedProjectTemplate
       };
 
       if (self.folderRoot) {
-        payload.parent = self.folderRoot.id
+        payload.parent = self.folderRoot.id;
       }
 
-
-      if (this.selectedProjectTemplate == 'blank') {
+      if (this.selectedProjectTemplate == "blank") {
         this.saveBlankProject();
       } else {
-
-
-        this.$gapi.createNewProject(
-          payload,
-          function (data) {
-            self.saveProject(data);
-          }
-        );
+        this.$gapi.createNewProject(payload, function(data) {
+          self.saveProject(data);
+        });
       }
     },
 
-    saveProject (data) {
+    saveProject(data) {
       const self = this;
       const payload = {
         name: self.projectname,
@@ -207,7 +185,7 @@ export default {
         template: data.template,
         folderExport: data.folderExport,
         project: data.folderRoot,
-        callback: function () {
+        callback: function() {
           self.redirect(data.folderRoot.id);
         }
       };
@@ -215,7 +193,7 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    saveBlankProject () {
+    saveBlankProject() {
       const self = this;
       const projectId = uuidv4();
       const payload = {
@@ -226,7 +204,7 @@ export default {
         project: {
           id: projectId
         },
-        callback: function () {
+        callback: function() {
           self.redirect(projectId);
         }
       };
@@ -234,7 +212,7 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    redirect (id) {
+    redirect(id) {
       this.projectname = "";
       this.$router.push("/project/" + id);
     }

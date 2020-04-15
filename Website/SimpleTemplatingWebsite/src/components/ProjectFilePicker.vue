@@ -1,5 +1,8 @@
 <template>
-  <v-card class="px-4 py-4">
+  <v-card
+    class="elevation-10 flex d-flex flex-column px-4 py-4"
+    color=" lighten-4"
+  >
     <template v-if="file">
       <v-card-title class="justify-center">
         <a target="_blank" :href="url">
@@ -29,6 +32,7 @@
       <v-card-title class="justify-center">
         <v-img
           contain
+          style="opacity: 0.2"
           :src="require('../assets/' + icon + '.png')"
           max-width="128"
         />

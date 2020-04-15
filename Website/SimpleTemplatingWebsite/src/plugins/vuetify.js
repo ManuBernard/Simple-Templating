@@ -1,14 +1,16 @@
 import Vue from "vue";
 import Vuetify from "vuetify/lib";
 
+import colors from "vuetify/lib/util/colors";
+
 Vue.use(Vuetify);
 
-const vuetify = new Vuetify({
+new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: "#4285f4",
-        secondary: "#b0bec5",
+        secondary: colors.blueGrey.darken4,
+        primary: colors.brown.base,
         accent: "#8c9eff",
         error: "#b71c1c"
       }

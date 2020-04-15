@@ -96,7 +96,7 @@ export function filePicker(type, callback) {
   function cb(data) {
     callback(data.docs[0]);
   }
-  console.log(window.gapi.auth2.getAuthInstance().currentUser.get());
+
   var token = window.gapi.auth2.getAuthInstance().currentUser.get().tc
     .access_token;
 

@@ -1,5 +1,4 @@
 import { firestoreAction } from "vuexfire";
-import { v4 as uuidv4 } from "uuid";
 
 const firebase = require("@/firebaseConfig.js");
 
@@ -38,7 +37,7 @@ const actions = {
         payload.callback();
       });
   },
-  remove: function({ commit, rootGetters }, project) {
+  remove: function({ rootGetters }, project) {
     firebase.db
       .collection("users")
       .doc(rootGetters["user/user"].id)
@@ -110,7 +109,7 @@ const actions = {
   },
 
   // Bind to firebase
-  bind: firestoreAction(({ bindFirestoreRef, rootGetters }, user) => {
+  bind: firestoreAction(({ bindFirestoreRef, rootGetters }) => {
     return bindFirestoreRef(
       "projects",
       firebase.db
