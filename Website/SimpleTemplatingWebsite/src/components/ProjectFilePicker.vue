@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    class="elevation-10 flex d-flex flex-column px-4 py-4"
-    color=" lighten-4"
-  >
+  <v-card class="flex d-flex flex-column px-4 py-4">
     <template v-if="file">
       <v-card-title class="justify-center">
         <a target="_blank" :href="url">

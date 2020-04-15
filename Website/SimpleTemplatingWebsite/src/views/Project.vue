@@ -1,17 +1,16 @@
 <template>
   <div v-if="project">
     <v-container fluid>
-      <v-toolbar class="my-5" flat>
-        <v-toolbar-title class="display-1">
-          <span class="font-weight-thin">The</span> {{ project.name }}
-          <span class="font-weight-thin">project</span>
+      <h1 class="display-2 mt-5 mb-10">
+        <span class="font-weight-thin">The</span> {{ project.name }}
+        <span class="font-weight-thin">project</span>
 
-          <v-btn icon class="ml-1" color="primary" @click.stop="showRenamer">
-            <v-icon>mdi-pencil-outline</v-icon>
-          </v-btn>
-        </v-toolbar-title>
-      </v-toolbar>
-      <v-row class=" mx-5">
+        <v-btn icon class="ml-1" color="primary" @click.stop="showRenamer">
+          <v-icon>mdi-pencil-outline</v-icon>
+        </v-btn>
+      </h1>
+
+      <v-row>
         <v-col class="flex d-flex flex-column ">
           <project-file-picker
             :type="'database'"
@@ -53,7 +52,7 @@
           </v-btn>
         </v-col>
         <v-col class="text-right">
-          <v-btn x-large color="primary" @click="templetify"
+          <v-btn rounded x-large color="primary" @click="templetify"
             >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
           </v-btn>
         </v-col>

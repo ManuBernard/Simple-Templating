@@ -4,57 +4,59 @@ export function createNewProject(payload, callback) {
     folderRoot: null,
     database: null,
     template: null,
-    folderExport: null
+    folderExport: null,
   };
 
+  var createFilePayload = {
+    name: payload.name + " - Simple Templating Project",
+    type: "folder",
+  };
+
+  if (payload.parent) {
+    createFilePayload.parent = payload.parent.id;
+  }
   // Create project root folder
-  createFile(
-    {
-      name: payload.name + " - Simple Templating Project",
-      type: "folder"
-    },
-    function(fldr) {
-      data.folderRoot = fldr;
+  createFile(createFilePayload, function(fldr) {
+    data.folderRoot = fldr;
 
-      // Ccreate DB
-      duplicateFile(
-        {
-          name: payload.name + " - Database",
-          fileId: payload.projectTemplate.database_id,
-          parent: data.folderRoot.id
-        },
-        function(db) {
-          data.database = db;
+    // Ccreate DB
+    duplicateFile(
+      {
+        name: payload.name + " - Database",
+        fileId: payload.projectTemplate.database_id,
+        parent: data.folderRoot.id,
+      },
+      function(db) {
+        data.database = db;
 
-          // Ccreate template
-          duplicateFile(
-            {
-              name: payload.name + " - Template",
-              fileId: payload.projectTemplate.template_id,
-              parent: data.folderRoot.id
-            },
-            function(tmpl) {
-              data.template = tmpl;
+        // Ccreate template
+        duplicateFile(
+          {
+            name: payload.name + " - Template",
+            fileId: payload.projectTemplate.template_id,
+            parent: data.folderRoot.id,
+          },
+          function(tmpl) {
+            data.template = tmpl;
 
-              // Ccreate Export folder
-              createFile(
-                {
-                  name: payload.name + " - Export",
-                  type: "folder",
-                  parent: data.folderRoot.id
-                },
-                function(xprtfldr) {
-                  data.folderExport = xprtfldr;
+            // Ccreate Export folder
+            createFile(
+              {
+                name: payload.name + " - Export",
+                type: "folder",
+                parent: data.folderRoot.id,
+              },
+              function(xprtfldr) {
+                data.folderExport = xprtfldr;
 
-                  callback(data);
-                }
-              );
-            }
-          );
-        }
-      );
-    }
-  );
+                callback(data);
+              }
+            );
+          }
+        );
+      }
+    );
+  });
 }
 
 // payload.type can be spreadsheet / presentation / folder
@@ -64,7 +66,7 @@ export function createFile(payload, callback) {
   let createObject = {
     name: payload.name,
     mimeType: "application/vnd.google-apps." + payload.type,
-    fields: "id,name"
+    fields: "id,name",
   };
 
   if (payload.parent) {
@@ -80,7 +82,7 @@ export function duplicateFile(payload, callback) {
   let createObject = {
     fileId: payload.fileId,
     name: payload.name,
-    fields: "id,name"
+    fields: "id,name",
   };
 
   if (payload.parent) {

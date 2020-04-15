@@ -1,35 +1,31 @@
 <template>
   <v-container fluid>
-    <v-toolbar class="my-5" flat>
-      <v-toolbar-title class="display-1">
-        New project
-      </v-toolbar-title>
-    </v-toolbar>
+    <h1 class="display-2 mt-5 mb-10">New project</h1>
 
-    <v-form ref="form" v-model="valid" @submit.prevent="add">
-      <div color="primary" class="text-center">
-        <v-card max-width="500" flat>
-          <v-card-text>
-            <v-text-field
-              outlined
-              autofocus
-              v-model="projectname"
-              :counter="30"
-              :rules="nameRules"
-              label="Project name"
-              required
-            ></v-text-field>
-          </v-card-text>
-        </v-card>
-      </div>
+    <v-form
+      ref="form"
+      v-model="valid"
+      @submit.prevent="add"
+    >
+      <v-card
+        max-width="500"
+        color="transparent"
+        flat
+      >
+        <v-text-field
+          outlined
+          autofocus
+          v-model="projectname"
+          :counter="30"
+          :rules="nameRules"
+          label="Project name"
+          required
+        ></v-text-field>
+      </v-card>
 
-      <v-toolbar flat>
-        <v-toolbar-title class="headline">
-          Choose a template
-        </v-toolbar-title>
-      </v-toolbar>
+      <h2 class="display-1 my-5">Choose a template</h2>
 
-      <v-row class="mx-2">
+      <v-row>
         <v-col
           sm="4"
           v-for="projectTemplate in projectTemplates"
@@ -43,9 +39,8 @@
             @click="selectedProjectTemplate = projectTemplate"
           >
             <v-card-title class="headline mb-1">
-              {{ projectTemplate.name }}</v-card-title
-            >
-            <v-card-text>{{ projectTemplate.description }}</v-card-text>
+              {{ projectTemplate.name }}</v-card-title>
+            <v-card-text class="subtitle-1">{{ projectTemplate.description }}</v-card-text>
           </v-card>
         </v-col>
         <v-col sm="4">
@@ -56,10 +51,8 @@
             @click="selectedProjectTemplate = 'blank'"
           >
             <v-card-title class="headline mb-1"> Blank project</v-card-title>
-            <v-card-text
-              >No files will be generated. Pick existing files from your
-              Drive.</v-card-text
-            >
+            <v-card-text>No files will be generated. Pick existing files from your
+              Drive.</v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -71,9 +64,17 @@
         required
       ></v-text-field>
 
-      <v-toolbar class="mt-10" flat primary>
+      <v-footer
+        fixed
+        dark
+        color="secondary"
+        class="text-right justify-right"
+      >
         <v-row>
-          <v-col>
+          <v-col cols=3>
+
+          </v-col>
+          <v-col class="text-right">
             <div v-if="selectedProjectTemplate == 'blank'">
               Starting from a blank project, you will have to choose an existing
               database, template, and export folder. No file nor folder will be
@@ -81,37 +82,49 @@
             </div>
             <div v-else>
               <div v-if="!folderRoot">
-                By default, your project will be created at the root of your
+                Your project will be created at the root of your
                 Drive.<br />
-                <a color="primary" @click.prevent="selectFolder">
+                <a
+                  color="primary"
+                  @click.prevent="selectFolder"
+                >
                   Change location
                 </a>
               </div>
               <div v-else>
-                Output folder : {{ folderRoot.root }}
-                <a color="primary" @click.prevent="selectFolder">
+                Output folder : {{ folderRoot.name }}
+                <a
+                  color="primary"
+                  @click.prevent="selectFolder"
+                >
                   Change folder
                 </a>
               </div>
             </div>
           </v-col>
-          <v-col class="text-right">
+          <v-col cols=2>
             <v-btn
               :disabled="!valid"
               color="primary"
-              class="mr-4"
+              class="mr-4 text-right"
               x-large
+              block
               @click="add"
             >
               Create project
             </v-btn>
+
           </v-col>
         </v-row>
-      </v-toolbar>
+      </v-footer>
+
     </v-form>
 
     <v-overlay v-if="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
     </v-overlay>
   </v-container>
 </template>
@@ -121,12 +134,12 @@ import { v4 as uuidv4 } from "uuid";
 
 export default {
   computed: {
-    projectTemplates: function() {
+    projectTemplates: function () {
       return this.$store.getters["config/templates"];
     }
   },
 
-  data() {
+  data () {
     return {
       loading: false,
       projectname: null,
@@ -145,18 +158,18 @@ export default {
     };
   },
 
-  mounted() {},
+  mounted () { },
 
   methods: {
-    selectFolder() {
+    selectFolder () {
       const self = this;
       this.$gapi.filePicker("FOLDERS", cb);
-      function cb(data) {
+      function cb (data) {
         self.folderRoot = data;
       }
     },
 
-    add() {
+    add () {
       const self = this;
       self.loading = true;
       var payload = {
@@ -165,19 +178,19 @@ export default {
       };
 
       if (self.folderRoot) {
-        payload.parent = self.folderRoot.id;
+        payload.parent = self.folderRoot;
       }
 
       if (this.selectedProjectTemplate == "blank") {
         this.saveBlankProject();
       } else {
-        this.$gapi.createNewProject(payload, function(data) {
+        this.$gapi.createNewProject(payload, function (data) {
           self.saveProject(data);
         });
       }
     },
 
-    saveProject(data) {
+    saveProject (data) {
       const self = this;
       const payload = {
         name: self.projectname,
@@ -185,7 +198,7 @@ export default {
         template: data.template,
         folderExport: data.folderExport,
         project: data.folderRoot,
-        callback: function() {
+        callback: function () {
           self.redirect(data.folderRoot.id);
         }
       };
@@ -193,7 +206,7 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    saveBlankProject() {
+    saveBlankProject () {
       const self = this;
       const projectId = uuidv4();
       const payload = {
@@ -204,7 +217,7 @@ export default {
         project: {
           id: projectId
         },
-        callback: function() {
+        callback: function () {
           self.redirect(projectId);
         }
       };
@@ -212,7 +225,7 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    redirect(id) {
+    redirect (id) {
       this.projectname = "";
       this.$router.push("/project/" + id);
     }
