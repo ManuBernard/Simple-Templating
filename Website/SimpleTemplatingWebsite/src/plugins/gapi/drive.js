@@ -96,6 +96,7 @@ export function duplicateFile(payload, callback) {
 
 export function filePicker(type, callback) {
   function cb(data) {
+    console.log(data);
     callback(data.docs[0]);
   }
 

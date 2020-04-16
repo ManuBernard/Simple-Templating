@@ -1,5 +1,5 @@
 <template>
-  <v-card class="flex d-flex flex-column px-4 py-4">
+  <v-card class="flex d-flex flex-column px-4 py-4" flat color="transparent">
     <template v-if="file">
       <v-card-title class="justify-center">
         <a target="_blank" :href="url">
@@ -12,16 +12,14 @@
       </v-card-title>
 
       <v-card-title class="headline justify-center">
-        <v-btn outlined target="_blank" color="primary" :href="url">
+        <v-btn outlined target="_blank" color="white" :href="url">
           {{ file.name }}
         </v-btn>
       </v-card-title>
 
       <v-card-actions class="justify-center">
         <v-spacer></v-spacer>
-        <v-btn text color="secondary" @click="$emit('select')"
-          >Change file
-        </v-btn>
+        <v-btn text color="white" @click="$emit('select')">Change file </v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </template>
@@ -35,7 +33,9 @@
         />
       </v-card-title>
       <v-card-actions class="justify-center">
-        <v-btn color="primary" @click="$emit('select')">Select file </v-btn>
+        <v-btn color="primary" @click="$emit('select')"
+          >Select {{ type }}
+        </v-btn>
       </v-card-actions>
     </template>
   </v-card>
@@ -45,11 +45,11 @@
 export default {
   props: {
     type: {
-      required: true
+      required: true,
     },
     file: {
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     url() {
@@ -71,7 +71,7 @@ export default {
         icon = "sheets";
       }
       return icon;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -31,4 +31,8 @@ export default new Router({
         import(/* webpackChunkName: "login" */ "./views/Project.vue"),
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    // return desired position
+    return { x: 0, y: 0 };
+  },
 });

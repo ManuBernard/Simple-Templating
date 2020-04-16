@@ -2,7 +2,7 @@
   <div>
     <feedback></feedback>
     <v-list dense>
-      <v-list-item link @click="$router.push('/')">
+      <v-list-item link :to="'/'">
         <v-list-item-action>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-action>
@@ -11,12 +11,12 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-list-item link @click="$router.push('/newproject/')">
+      <v-list-item link :to="'/newproject/'">
         <v-list-item-action>
           <v-icon>mdi-plus</v-icon>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title>New project</v-list-item-title>
+          <v-list-item-title>New project </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -25,7 +25,7 @@
       <v-list-item
         link
         v-for="(project, key) in projects"
-        @click="select(project)"
+        :to="'/project/' + project.id"
         v-bind:key="key"
       >
         <v-list-item-action>
@@ -47,23 +47,14 @@ export default {
     },
     projects() {
       return this.$store.getters["projects/projects"];
-    }
+    },
   },
 
   data() {
     return {};
   },
 
-  methods: {
-    select(project) {
-      this.$router.push("/project/" + project.id);
-      // this.$store.dispatch("projects/select", project);
-    },
-
-    newproject() {
-      this.$router.push("/newproject/");
-    }
-  },
-  created() {}
+  methods: {},
+  created() {},
 };
 </script>

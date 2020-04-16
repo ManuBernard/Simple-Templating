@@ -13,11 +13,10 @@
           :key="project.id"
         >
           <v-card>
-            <v-card-title class="secondary white--text text-center justify-center">
-              <h3
-                centered
-                class="text-center my-5"
-              >{{ project.name }}</h3>
+            <v-card-title
+              class="secondary white--text text-center justify-center"
+            >
+              <h3 centered class="text-center my-5">{{ project.name }}</h3>
             </v-card-title>
             <v-card-text>
               <v-list>
@@ -31,7 +30,12 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ project.database.name }}
+                      <template v-if="project.database">
+                        {{ project.database.name }}
+                      </template>
+                      <template v-else>
+                        No database
+                      </template>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -46,14 +50,17 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ project.template.name }}
+                      <template v-if="project.template">
+                        {{ project.template.name }}
+                      </template>
+                      <template v-else>
+                        No template
+                      </template>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
-              <div class="text-right">
-
-              </div>
+              <div class="text-right"></div>
             </v-card-text>
             <v-card-actions
               color="grey"
@@ -61,35 +68,30 @@
             >
               <v-row>
                 <v-col>
-                  {{ moment(project.created).format("MMM Do YY") }}
+                  <span class="body-2">Created on</span><br />
+                  <span class="body-2">
+                    {{ moment(project.created).format("MMM Do YYYY") }}</span
+                  >
                 </v-col>
                 <v-col>
                   <v-btn
                     color="primary"
                     class="mx-auto"
                     @click="$router.push('/project/' + project.id)"
-                  >Open</v-btn>
+                    >Open</v-btn
+                  >
                 </v-col>
               </v-row>
-
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
     </template>
     <template v-else>
-      <v-row
-        class="mt-10 pt-10"
-        justify="center"
-        align="center"
-      >
+      <v-row class="mt-10 pt-10" justify="center" align="center">
         <v-col class="mx-auto text-center">
           <h1 class="display-2 mb-5">Create your first great project</h1>
-          <v-btn
-            large
-            color="primary"
-            @click="$router.push('newproject')"
-          >
+          <v-btn large color="primary" @click="$router.push('newproject')">
             <v-icon class="mr-2">mdi-plus</v-icon>New project
           </v-btn>
         </v-col>
@@ -103,18 +105,18 @@ var moment = require("moment");
 
 export default {
   computed: {
-    projects () {
+    projects() {
       return this.$store.getters["projects/projects"];
-    }
+    },
   },
 
-  data () {
+  data() {
     return {
-      moment: moment
+      moment: moment,
     };
   },
 
   methods: {},
-  created () { }
+  created() {},
 };
 </script>

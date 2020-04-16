@@ -14,7 +14,7 @@ Vue.config.productionTip = false;
 
 // Force Login
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
+  const requiresAuth = to.matched.some((x) => x.meta.requiresAuth);
   const currentUser = firebase.auth().currentUser;
 
   if (requiresAuth && !currentUser) {
@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
 
 // Load all components
 const files = require.context("./", true, /\.vue$/i);
-files.keys().map(key =>
+files.keys().map((key) =>
   Vue.component(
     key
       .split("/")
@@ -42,5 +42,5 @@ new Vue({
   router,
   store,
   vuetify,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");

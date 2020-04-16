@@ -5,79 +5,95 @@
         <span class="font-weight-thin">The</span> {{ project.name }}
         <span class="font-weight-thin">project</span>
 
-        <v-btn icon class="ml-1" color="primary" @click.stop="showRenamer">
+        <v-btn icon class="ml-5" color="primary" @click.stop="showRenamer">
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
       </h1>
+      <v-card color="secondary" class="elevation-5 py-5">
+        <v-row class="mb-2" justify="center" align="center">
+          <v-col class="flex d-flex flex-column ">
+            <project-file-picker
+              :type="'database'"
+              :file="project.database"
+              @select="selectDatabase"
+            ></project-file-picker>
+          </v-col>
 
-      <v-row>
-        <v-col class="flex d-flex flex-column ">
-          <project-file-picker
-            :type="'database'"
-            :file="project.database"
-            @select="selectDatabase"
-          ></project-file-picker>
-        </v-col>
-
-        <v-col class=" flex d-flex flex-column ">
-          <project-file-picker
-            :type="'template'"
-            :file="project.template"
-            @select="selectTemplate"
-          ></project-file-picker>
-        </v-col>
-      </v-row>
-
-      <v-row align="center" justify="center" class=" mx-5">
-        <v-col class="text-left">
-          <template v-if="project.folder">
-            <v-btn icon color="primary" @click="selectFolder">
-              <v-icon>mdi-settings</v-icon>
-            </v-btn>
-            Output folder:
-            <v-btn
-              text
-              color="primary"
-              target="_blank"
-              class=""
-              :href="
-                'https://docs.google.com/drive/u/0/folders/' + project.folder.id
-              "
+          <v-col cols="2" lg="1" class="text-center d-none d-md-flex">
+            <v-icon color="secondary lighten-1" class="display-4"
+              >mdi-plus</v-icon
             >
-              {{ project.folder.name }}
-            </v-btn>
-          </template>
-          <v-btn color="primary" outlined @click="selectFolder" v-else>
-            <v-icon class="mr-3">mdi-settings</v-icon> Select export folder
+          </v-col>
+
+          <v-col class=" flex d-flex flex-column ">
+            <project-file-picker
+              :type="'template'"
+              :file="project.template"
+              @select="selectTemplate"
+            ></project-file-picker>
+          </v-col>
+        </v-row>
+      </v-card>
+      <v-card flat color="transparent" class="text-center mt-n8 ">
+        <v-btn
+          color="primary text-center center elevation-10"
+          x-large
+          rounded
+          :disabled="!validTempletify"
+          @click="templetify"
+          >Templetify <v-icon class="ml-2">mdi-auto-fix</v-icon>
+        </v-btn>
+      </v-card>
+
+      <v-toolbar color="transparent" flat class="">
+        <template v-if="project.folder">
+          <v-btn icon color="primary" @click="selectFolder">
+            <v-icon>mdi-settings</v-icon>
           </v-btn>
-        </v-col>
-        <v-col class="text-right">
-          <v-btn rounded x-large color="primary" @click="templetify"
-            >Run templating <v-icon class="ml-2">mdi-auto-fix</v-icon>
+          Output folder:
+          <v-btn
+            text
+            color="primary"
+            target="_blank"
+            class=""
+            :href="
+              'https://docs.google.com/drive/u/0/folders/' + project.folder.id
+            "
+          >
+            {{ project.folder.name }}
           </v-btn>
-        </v-col>
-      </v-row>
+        </template>
+        <v-btn color="primary" outlined @click="selectFolder" v-else>
+          <v-icon class="mr-3">mdi-settings</v-icon> Select export folder
+        </v-btn>
+      </v-toolbar>
 
       <v-data-table
+        class="transparent"
+        color="transparent"
         :headers="headers"
         :items="formatedExports"
         :items-per-page="5"
-        class="elevation-1"
       >
         <template v-slot:item.link="{ item }">
           <v-btn outlined target="_blank" color="primary" :href="item.link"
             >View
           </v-btn>
-        </template></v-data-table
+        </template>
+      </v-data-table>
+
+      <v-card
+        color="transparent"
+        flat
+        max-width="500"
+        class="float-right mb-10"
       >
-      <v-toolbar flat>
-        <v-spacer></v-spacer>
-        <div v-if="!remove">
+        <template v-if="!remove">
           <v-btn outlined tile color="error" @click="remove = true">
             Remove project
           </v-btn>
-        </div>
-        <div v-else>
+        </template>
+        <template v-else>
           <v-btn
             outlined
             tile
@@ -90,9 +106,13 @@
           <v-btn outlined tile color="error" @click="removeProject">
             Confirm remove project
           </v-btn>
-        </div>
-      </v-toolbar>
+          <v-card flat color="transparent" class="text-right mt-2 body-1">
+            Files from your Google Drive will not be deleted.
+          </v-card>
+        </template>
+      </v-card>
     </v-container>
+
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
@@ -124,23 +144,20 @@
         </v-card-title>
 
         <v-card-text>
-          <v-form ref="form" v-model="valid" @submit.prevent="savename">
+          <v-form
+            class="my-10"
+            ref="form"
+            v-model="valid"
+            @submit.prevent="savename"
+          >
             <v-text-field
               v-model="projectname"
               :counter="30"
               :rules="nameRules"
               label="Project name"
               required
+              autofocus="true"
             ></v-text-field>
-
-            <v-btn
-              :disabled="!valid"
-              color="success"
-              class="mr-4"
-              @click="savename"
-            >
-              Submit
-            </v-btn>
           </v-form>
         </v-card-text>
 
@@ -151,6 +168,14 @@
           <v-btn color="secondary" text @click="dialog = false">
             Close
           </v-btn>
+          <v-btn
+            :disabled="!valid"
+            color="primary"
+            class="mr-4"
+            @click="savename"
+          >
+            Submit
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -158,10 +183,20 @@
 </template>
 
 <script>
+var moment = require("moment");
+
 export default {
   computed: {
     project() {
       return this.$store.getters["projects/byId"](this.$route.params.id);
+    },
+
+    validTempletify() {
+      let v = true;
+      if (!this.project.template) v = false;
+      if (!this.project.database) v = false;
+      if (!this.project.folder) v = false;
+      return v;
     },
 
     exports() {
@@ -170,19 +205,20 @@ export default {
     formatedExports() {
       var ret = [];
 
-      this.exports.forEach(exp => {
+      this.exports.forEach((exp) => {
         ret.push({
           name: exp.name,
-          created: exp.created,
-          link: "https://docs.google.com/presentation/d/" + exp.id + "/edit"
+          created: moment(exp.created).format("MMM Do YYYY HH:mm"),
+          link: "https://docs.google.com/presentation/d/" + exp.id + "/edit",
         });
       });
       return ret;
-    }
+    },
   },
 
   data() {
     return {
+      moment: moment,
       remove: false,
       loading: false,
       lastGenerated: null,
@@ -190,19 +226,19 @@ export default {
       dialog: false,
       valid: true,
       nameRules: [
-        v => !!v || "Name is required",
-        v => (v && v.length <= 30) || "Name must be less than 30 characters"
+        (v) => !!v || "Name is required",
+        (v) => (v && v.length <= 30) || "Name must be less than 30 characters",
       ],
       headers: [
         {
           text: "Name",
           align: "start",
           sortable: true,
-          value: "name"
+          value: "name",
         },
         { text: "Created", value: "created" },
-        { text: "Link", value: "link" }
-      ]
+        { text: "Link", value: "link" },
+      ],
     };
   },
 
@@ -216,7 +252,7 @@ export default {
       this.dialog = false;
       this.$store.dispatch("projects/update", {
         id: this.project.id,
-        name: this.projectname
+        name: this.projectname,
       });
     },
 
@@ -257,8 +293,8 @@ export default {
           project: self.project,
           database: {
             id: database.id,
-            name: database.name
-          }
+            name: database.name,
+          },
         };
 
         self.$store.dispatch("projects/addDatabase", payload);
@@ -272,7 +308,7 @@ export default {
       function cb(data) {
         var payload = {
           project: self.project,
-          template: data
+          template: data,
         };
 
         self.$store.dispatch("projects/addTemplate", payload);
@@ -286,7 +322,7 @@ export default {
       function cb(data) {
         var payload = {
           project: self.project,
-          folder: data
+          folderExport: data,
         };
 
         self.$store.dispatch("projects/addFolder", payload);
@@ -295,11 +331,11 @@ export default {
     removeProject() {
       this.$store.dispatch("projects/remove", this.project);
       this.$router.push("/");
-    }
+    },
   },
   mounted() {
     this.$store.dispatch("exports/bind", this.$route.params.id);
-  }
+  },
 };
 </script>
 

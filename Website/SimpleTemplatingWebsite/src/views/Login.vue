@@ -1,30 +1,28 @@
 <template>
-  <v-container
-    class="fill-height"
-    fluid
-  >
-
-    <v-row
-      justify="center"
-      align="center"
-    >
+  <v-container class="fill-height" fluid>
+    <v-row justify="center" align="center">
       <v-col>
         <v-card
           flat
-          max-width="300"
+          color="transparent"
+          max-width="400"
           class="mx-auto text-center"
         >
-          <h1>Get started</h1>
+          <h1 class="simpletemplatingtitle">Simple Templating</h1>
 
           <v-img
-            @click=signin
+            @click="signin"
             :src="require('../assets/signin.png')"
             class="mt-3 mb-10"
             contain
           />
-          Back to <a href="https://simpletemplating.com">Simple templating</a>
+          <a href="https://simpletemplating.com">Simple templating</a> -
+          <a href="https://simpletemplating.com/privacypolicy"
+            >Privacy Policy</a
+          >
+          -
+          <a href="https://simpletemplating.com/contact">Contact</a>
         </v-card>
-
       </v-col>
     </v-row>
   </v-container>
@@ -33,14 +31,14 @@
 <script>
 export default {
   computed: {
-    user () {
+    user() {
       return this.$store.getters["user/user"];
-    }
+    },
   },
   methods: {
-    signin () {
+    signin() {
       this.$gapi.signin();
-    }
-  }
+    },
+  },
 };
 </script>

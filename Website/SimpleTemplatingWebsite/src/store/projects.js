@@ -3,18 +3,18 @@ import { firestoreAction } from "vuexfire";
 const firebase = require("@/firebaseConfig.js");
 
 const state = {
-  projects: []
+  projects: [],
 };
 
 const getters = {
   byId: function(state) {
     return function(id) {
-      return state.projects.find(element => element.id == id);
+      return state.projects.find((element) => element.id == id);
     };
   },
   projects: function(state) {
     return state.projects;
-  }
+  },
 };
 
 const actions = {
@@ -27,10 +27,10 @@ const actions = {
       .doc(payload.project.id)
       .set({
         name: payload.name,
-        created: Date.now()
+        created: Date.now(),
         // userId: rootGetters["user/user"].id
       })
-      .then(p => {
+      .then((p) => {
         dispatch("addDatabase", payload);
         dispatch("addTemplate", payload);
         dispatch("addFolder", payload);
@@ -92,6 +92,7 @@ const actions = {
 
   // Folder
   addFolder: function({ rootGetters }, payload) {
+    console.log(payload);
     firebase.db
       .collection("users")
       .doc(rootGetters["user/user"].id)
@@ -119,7 +120,7 @@ const actions = {
         .orderBy("created", "desc")
       // firebase.db.collection("projects").where("userId", "==", user.id)
     );
-  })
+  }),
 };
 
 const mutations = {};
@@ -129,5 +130,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

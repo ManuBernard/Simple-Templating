@@ -1,27 +1,14 @@
 <template>
   <v-app id="inspire">
-    <v-container
-      class="fill-height"
-      fluid
-      yellow
-      lighten-5
-    >
-      <template
-        center
-        v-if="!loaded"
-      >
-        <v-container
-          class="fill-height"
-          fluid
-        >
-          <v-row
-            justify="center"
-            align="center"
-          >
+    <v-container class="fill-height" yellow lighten-5 fluid>
+      <template center v-if="!loaded">
+        <v-container class="fill-height" fluid>
+          <v-row justify="center" align="center">
             <v-col>
               <v-card
                 flat
                 max-width="300"
+                color="transparent"
                 class="mx-auto text-center"
               >
                 <v-progress-circular
@@ -48,60 +35,57 @@
         </v-app-bar> -->
 
         <v-navigation-drawer
+          id="sider"
           v-model="drawer"
           app
-          clipped
-          :permanent=$vuetify.breakpoint.mdAndUp
           dark
-          color="primary"
+          mobile-break-point="1024"
         >
-
-          <h1 class="my-6 text-center white--text simpletemplatingtitle">Simple<br>Templating</h1>
+          <h1 class="my-6 text-center white--text simpletemplatingtitle">
+            Simple<br />Templating
+          </h1>
 
           <sidebar :drawer="drawer"></sidebar>
-          <v-footer fixed>
-            <v-btn
+          <v-footer fixed color="transparent">
+            <a
+              class="white--text"
               target="_blank"
-              color="white"
-              outlined
-              href="http://simpletemplating.com/docs/"
+              href="https://simpletemplating.com/privacypolicy/"
+              >Privacy policy</a
             >
-              Documentation <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
-            </v-btn>
 
-            <a href="https://simpletemplating.com/privacypolicy/">Privacy policy</a>
+            <v-spacer></v-spacer>
+            <a
+              class="white--text"
+              target="_blank"
+              href="https://simpletemplating.com/contact/"
+              >Contact</a
+            >
 
-            <span class="caption">&copy; {{ new Date().getFullYear() }} {{ APP_NAME }}
-              <span class="font-weight-thin">V {{ APP_VERSION }}</span></span>
-
+            <span class="body-2"
+              >&copy;{{ new Date().getFullYear() }} {{ APP_NAME }}
+              <span class="font-weight-thin">V {{ APP_VERSION }}</span></span
+            >
           </v-footer>
         </v-navigation-drawer>
 
-        <v-content class="fill-height">
-          <v-app-bar-nav-icon
-            @click.stop="drawer = !drawer"
-            class="d-md-none"
-          />
+        <v-app-bar app color="orange lighten-5" flat>
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
           <v-spacer></v-spacer>
-          <v-menu
-            right
-            top
+          <v-btn
+            target="_blank"
+            color="primary"
+            outlined
+            class="mr-3"
+            href="http://simpletemplating.com/docs/"
           >
+            Docs <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
+          </v-btn>
+          <v-menu right top>
             <template v-slot:activator="{ on }">
-              <v-btn
-                class="mx-2"
-                icon
-                v-on="on"
-              >
-                <v-avatar
-                  class="ml-3"
-                  size="40"
-                >
-                  <img
-                    v-if="user.image"
-                    alt="Avatar"
-                    :src="user.image"
-                  />
+              <v-btn class="mx-2" icon v-on="on">
+                <v-avatar size="43">
+                  <img v-if="user.image" alt="Avatar" :src="user.image" />
                   <v-icon
                     v-else
                     :color="message.color"
@@ -117,10 +101,9 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <transition
-            name="fade"
-            mode="out-in"
-          >
+        </v-app-bar>
+        <v-content>
+          <transition name="fade" mode="out-in">
             <router-view :key="$route.fullPath"></router-view>
           </transition>
         </v-content>
@@ -130,7 +113,6 @@
           <login></login>
         </v-content>
       </template>
-
     </v-container>
   </v-app>
 </template>
@@ -138,43 +120,53 @@
 <script>
 export default {
   props: {
-    source: String
+    source: String,
   },
 
   data: () => ({
     drawer: null,
     loaded: false,
     APP_VERSION: process.env.VUE_APP_VERSION,
-    APP_NAME: process.env.VUE_APP_NAME
+    APP_NAME: process.env.VUE_APP_NAME,
   }),
 
   computed: {
-    user () {
+    user() {
       return this.$store.getters["user/user"];
-    }
+    },
   },
 
   methods: {
-    signout () {
+    signout() {
       this.$gapi.signout();
-    }
+    },
   },
 
-  mounted () {
+  mounted() {
     let self = this;
 
     this.$store.dispatch("config/bind");
 
-    this.$gapi.init(function () {
+    this.$gapi.init(function() {
       self.loaded = true;
     });
-  }
+  },
 };
 </script>
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
 
+#sider {
+  background-image: linear-gradient(
+      to bottom,
+      rgba(1, 1, 1, 0.92),
+      rgba(1, 1, 1, 0.85)
+    ),
+    url("~@/assets/machine.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+}
 .simpletemplatingtitle {
   font-family: "Lobster", cursive;
   font-size: 2rem;
