@@ -19,7 +19,12 @@
             ></project-file-picker>
           </v-col>
 
-          <v-col cols="2" lg="1" class="text-center d-none d-md-flex">
+          <v-col
+            cols="12"
+            sm="3"
+            lg="2"
+            class="text-center d-none d-md-flex justify-center"
+          >
             <v-icon color="secondary lighten-1" class="display-4"
               >mdi-plus</v-icon
             >
@@ -113,20 +118,27 @@
       </v-card>
     </v-container>
 
-    <v-overlay v-if="loading">
+    <v-overlay
+      clipped-left
+      color="secondary"
+      opacity="0.8"
+      v-if="loading"
+      z-index="9999"
+    >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
 
     <v-overlay
       color="primary"
       opacity="0.8"
+      z-index="9999"
       class="text-center"
       v-if="lastGenerated"
     >
       <v-icon class="display-4 mb-10">mdi-thumb-up-outline</v-icon>
 
       <h2 class="display-1 font-weight-bold  mb-10">
-        {{ lastGenerated.name }} has been freshly generated
+        {{ lastGenerated.name }} has been generated
       </h2>
 
       <v-btn @click="openLastGenerated" x-large class="mr-4">

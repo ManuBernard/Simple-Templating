@@ -46,26 +46,30 @@
           </h1>
 
           <sidebar :drawer="drawer"></sidebar>
-          <v-footer fixed color="transparent">
+
+          <div style="height: 70px;"></div>
+
+          <v-footer fixed color="secondary" class=" py-3 body-1 ">
             <a
-              class="white--text"
+              class="white--text legal"
               target="_blank"
               href="https://simpletemplating.com/privacypolicy/"
               >Privacy policy</a
             >
+            &nbsp;
 
-            <v-spacer></v-spacer>
             <a
-              class="white--text"
+              class="white--text legal"
               target="_blank"
               href="https://simpletemplating.com/contact/"
               >Contact</a
             >
 
-            <span class="body-2"
-              >&copy;{{ new Date().getFullYear() }} {{ APP_NAME }}
-              <span class="font-weight-thin">V {{ APP_VERSION }}</span></span
-            >
+            <span class="body-2 mt-1 font-weight-thin">
+              &copy;{{ new Date().getFullYear() }} {{ APP_NAME }} V{{
+                APP_VERSION
+              }}
+            </span>
           </v-footer>
         </v-navigation-drawer>
 
@@ -182,5 +186,13 @@ export default {
 .fade-enter,
 .fade-leave-active {
   opacity: 0;
+}
+
+.legal {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 </style>
