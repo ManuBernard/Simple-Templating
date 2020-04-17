@@ -9,13 +9,14 @@ var API_KEY = process.env.VUE_APP_API_KEY;
 var DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
   "https://sheets.googleapis.com/$discovery/rest?version=v4",
-  "https://slides.googleapis.com/$discovery/rest?version=v1"
+  "https://slides.googleapis.com/$discovery/rest?version=v1",
+  "https://docs.googleapis.com/$discovery/rest?version=v1",
 ];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 var SCOPES =
-  "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations";
+  "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations https://www.googleapis.com/auth/documents";
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -38,7 +39,7 @@ function initClient() {
       apiKey: API_KEY,
       clientId: CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES
+      scope: SCOPES,
     })
     .then(
       function() {
@@ -70,7 +71,7 @@ function updateSigninStatus(isSignedIn) {
       id: profile.getId(),
       name: profile.getName(),
       email: profile.getEmail(),
-      image: profile.getImageUrl()
+      image: profile.getImageUrl(),
     });
 
     onSignInCallback();

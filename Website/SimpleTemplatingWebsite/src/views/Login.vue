@@ -1,6 +1,12 @@
 <template>
-  <v-container class="fill-height" fluid>
-    <v-row justify="center" align="center">
+  <v-container
+    class="fill-height"
+    fluid
+  >
+    <v-row
+      justify="center"
+      align="center"
+    >
       <v-col>
         <v-card
           flat
@@ -17,9 +23,7 @@
             contain
           />
           <a href="https://simpletemplating.com">Simple templating</a> -
-          <a href="https://simpletemplating.com/privacypolicy"
-            >Privacy Policy</a
-          >
+          <a href="https://simpletemplating.com/privacypolicy">Privacy Policy</a>
           -
           <a href="https://simpletemplating.com/contact">Contact</a>
         </v-card>
@@ -31,12 +35,12 @@
 <script>
 export default {
   computed: {
-    user() {
+    user () {
       return this.$store.getters["user/user"];
     },
   },
   methods: {
-    signin() {
+    signin () {
       this.$gapi.signin();
     },
   },

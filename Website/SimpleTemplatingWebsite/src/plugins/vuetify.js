@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuetify from "vuetify/lib";
-
 import colors from "vuetify/lib/util/colors";
 
 Vue.use(Vuetify);
@@ -9,7 +8,6 @@ new Vuetify({
   theme: {
     themes: {
       light: {
-        background: "pink",
         secondary: colors.blueGrey.darken4,
         primary: colors.deepOrange.darken2,
         accent: "#8c9eff",

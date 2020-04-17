@@ -1,8 +1,17 @@
 <template>
   <v-app id="inspire">
-    <template center v-if="!loaded">
-      <v-container class="fill-height" fluid>
-        <v-row justify="center" align="center">
+    <template
+      center
+      v-if="!loaded"
+    >
+      <v-container
+        class="fill-height"
+        fluid
+      >
+        <v-row
+          justify="center"
+          align="center"
+        >
           <v-col>
             <v-card
               flat
@@ -35,21 +44,23 @@
 
         <div style="height: 70px;"></div>
 
-        <v-footer fixed color="rgba(0,0,0,0.9)" class=" py-3 body-1 ">
+        <v-footer
+          fixed
+          color="rgba(0,0,0,0.9)"
+          class=" py-3 body-1 "
+        >
           <a
             class="white--text legal"
             target="_blank"
             href="https://simpletemplating.com/privacypolicy/"
-            >Privacy policy</a
-          >
+          >Privacy policy</a>
           &nbsp;
 
           <a
             class="white--text legal"
             target="_blank"
             href="https://simpletemplating.com/contact/"
-            >Contact</a
-          >
+          >Contact</a>
 
           <span class="body-2 mt-1 font-weight-thin">
             &copy;{{ new Date().getFullYear() }} {{ APP_NAME }} V{{
@@ -59,7 +70,11 @@
         </v-footer>
       </v-navigation-drawer>
 
-      <v-app-bar app color="orange lighten-5" flat>
+      <v-app-bar
+        app
+        color="orange lighten-5"
+        flat
+      >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-spacer></v-spacer>
         <v-btn
@@ -71,11 +86,22 @@
         >
           Docs <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
         </v-btn>
-        <v-menu right top>
+        <v-menu
+          right
+          top
+        >
           <template v-slot:activator="{ on }">
-            <v-btn class="mx-2" icon v-on="on">
+            <v-btn
+              class="mx-2"
+              icon
+              v-on="on"
+            >
               <v-avatar size="43">
-                <img v-if="user.image" alt="Avatar" :src="user.image" />
+                <img
+                  v-if="user.image"
+                  alt="Avatar"
+                  :src="user.image"
+                />
                 <v-icon
                   v-else
                   :color="message.color"
@@ -93,13 +119,20 @@
         </v-menu>
       </v-app-bar>
       <v-content>
-        <transition name="fade" mode="out-in">
-          <router-view :key="$route.fullPath"></router-view>
-        </transition>
+        <v-container fluid>
+          <transition
+            name="fade"
+            mode="out-in"
+          >
+
+            <router-view :key="$route.fullPath"></router-view>
+          </transition>
+        </v-container>
       </v-content>
     </template>
     <template v-else>
       <v-content class="fill-height">
+
         <login></login>
       </v-content>
     </template>
@@ -120,23 +153,23 @@ export default {
   }),
 
   computed: {
-    user() {
+    user () {
       return this.$store.getters["user/user"];
     },
   },
 
   methods: {
-    signout() {
+    signout () {
       this.$gapi.signout();
     },
   },
 
-  mounted() {
+  mounted () {
     let self = this;
 
     this.$store.dispatch("config/bind");
 
-    this.$gapi.init(function() {
+    this.$gapi.init(function () {
       self.loaded = true;
     });
   },

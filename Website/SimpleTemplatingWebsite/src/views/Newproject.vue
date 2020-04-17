@@ -18,7 +18,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col class="pt-0 pb-10 pt-sm-2 pb-sm-2">
               <div
                 v-if="
                   selectedProjectTemplate &&
@@ -59,7 +59,7 @@
         </v-btn>
       </v-card>
 
-      <h2 class="display-1 my-5">Choose a template</h2>
+      <h2 class="display-1 my-5">Choose a seed project</h2>
 
       <v-row>
         <v-col
