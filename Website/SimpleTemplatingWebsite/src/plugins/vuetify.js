@@ -9,6 +9,7 @@ new Vuetify({
   theme: {
     themes: {
       light: {
+        background: "pink",
         secondary: colors.blueGrey.darken4,
         primary: colors.deepOrange.darken2,
         accent: "#8c9eff",

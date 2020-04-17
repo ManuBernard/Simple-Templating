@@ -1,25 +1,16 @@
 <template>
   <v-container>
-    <v-card
-      dark
-      primary
-      darken-1
-      fluid
-      color="secondary"
-    >
+    <v-card dark fluid color="secondary">
       <v-card-text>
         <v-row>
           <v-col class="text-left">
-            <span class="subtitle-1">During Beta, all features are free to use, your feedback is
-              important!</span>
+            <span class="subtitle-1"
+              >During Beta, all features are free to use, your feedback is
+              important!</span
+            >
           </v-col>
           <v-col class="text-center">
-            <v-btn
-              color="white"
-              light
-              outlined
-              block
-            >Give your feedback</v-btn>
+            <v-btn color="white" light outlined block>Give your feedback</v-btn>
           </v-col>
         </v-row>
       </v-card-text>

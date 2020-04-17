@@ -1,123 +1,108 @@
 <template>
   <v-app id="inspire">
-    <v-container class="fill-height" yellow lighten-5 fluid>
-      <template center v-if="!loaded">
-        <v-container class="fill-height" fluid>
-          <v-row justify="center" align="center">
-            <v-col>
-              <v-card
-                flat
-                max-width="300"
-                color="transparent"
-                class="mx-auto text-center"
-              >
-                <v-progress-circular
-                  indeterminate
-                  size="64"
-                ></v-progress-circular>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
-      <template v-else-if="user">
-        <!-- <v-app-bar
-          app
-          dark
-          color="primary "
-          clipped-left
-        >
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-          <v-toolbar-title>{{ APP_NAME }}</v-toolbar-title>
-
-          <v-spacer></v-spacer>
-
-        </v-app-bar> -->
-
-        <v-navigation-drawer
-          id="sider"
-          v-model="drawer"
-          app
-          dark
-          mobile-break-point="1024"
-        >
-          <h1 class="my-6 text-center white--text simpletemplatingtitle">
-            Simple<br />Templating
-          </h1>
-
-          <sidebar :drawer="drawer"></sidebar>
-
-          <div style="height: 70px;"></div>
-
-          <v-footer fixed color="secondary" class=" py-3 body-1 ">
-            <a
-              class="white--text legal"
-              target="_blank"
-              href="https://simpletemplating.com/privacypolicy/"
-              >Privacy policy</a
+    <template center v-if="!loaded">
+      <v-container class="fill-height" fluid>
+        <v-row justify="center" align="center">
+          <v-col>
+            <v-card
+              flat
+              max-width="300"
+              color="transparent"
+              class="mx-auto text-center"
             >
-            &nbsp;
+              <v-progress-circular
+                indeterminate
+                size="64"
+              ></v-progress-circular>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+    <template v-else-if="user">
+      <v-navigation-drawer
+        id="sider"
+        v-model="drawer"
+        app
+        dark
+        mobile-break-point="1024"
+      >
+        <h1 class="my-6 text-center white--text simpletemplatingtitle">
+          Simple<br />Templating
+        </h1>
 
-            <a
-              class="white--text legal"
-              target="_blank"
-              href="https://simpletemplating.com/contact/"
-              >Contact</a
-            >
+        <sidebar :drawer="drawer"></sidebar>
 
-            <span class="body-2 mt-1 font-weight-thin">
-              &copy;{{ new Date().getFullYear() }} {{ APP_NAME }} V{{
-                APP_VERSION
-              }}
-            </span>
-          </v-footer>
-        </v-navigation-drawer>
+        <div style="height: 70px;"></div>
 
-        <v-app-bar app color="orange lighten-5" flat>
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-          <v-spacer></v-spacer>
-          <v-btn
+        <v-footer fixed color="rgba(0,0,0,0.9)" class=" py-3 body-1 ">
+          <a
+            class="white--text legal"
             target="_blank"
-            color="primary"
-            outlined
-            class="mr-3"
-            href="http://simpletemplating.com/docs/"
+            href="https://simpletemplating.com/privacypolicy/"
+            >Privacy policy</a
           >
-            Docs <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
-          </v-btn>
-          <v-menu right top>
-            <template v-slot:activator="{ on }">
-              <v-btn class="mx-2" icon v-on="on">
-                <v-avatar size="43">
-                  <img v-if="user.image" alt="Avatar" :src="user.image" />
-                  <v-icon
-                    v-else
-                    :color="message.color"
-                    v-text="message.icon"
-                  ></v-icon>
-                </v-avatar>
-              </v-btn>
-            </template>
+          &nbsp;
 
-            <v-list>
-              <v-list-item @click="signout">
-                <v-list-item-title>Sign out</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-app-bar>
-        <v-content>
-          <transition name="fade" mode="out-in">
-            <router-view :key="$route.fullPath"></router-view>
-          </transition>
-        </v-content>
-      </template>
-      <template v-else>
-        <v-content class="fill-height">
-          <login></login>
-        </v-content>
-      </template>
-    </v-container>
+          <a
+            class="white--text legal"
+            target="_blank"
+            href="https://simpletemplating.com/contact/"
+            >Contact</a
+          >
+
+          <span class="body-2 mt-1 font-weight-thin">
+            &copy;{{ new Date().getFullYear() }} {{ APP_NAME }} V{{
+              APP_VERSION
+            }}
+          </span>
+        </v-footer>
+      </v-navigation-drawer>
+
+      <v-app-bar app color="orange lighten-5" flat>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+        <v-spacer></v-spacer>
+        <v-btn
+          target="_blank"
+          color="primary"
+          outlined
+          class="mr-3"
+          href="http://simpletemplating.com/docs/"
+        >
+          Docs <v-icon class="ml-2">mdi-help-circle-outline</v-icon>
+        </v-btn>
+        <v-menu right top>
+          <template v-slot:activator="{ on }">
+            <v-btn class="mx-2" icon v-on="on">
+              <v-avatar size="43">
+                <img v-if="user.image" alt="Avatar" :src="user.image" />
+                <v-icon
+                  v-else
+                  :color="message.color"
+                  v-text="message.icon"
+                ></v-icon>
+              </v-avatar>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item @click="signout">
+              <v-list-item-title>Sign out</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-app-bar>
+      <v-content>
+        <transition name="fade" mode="out-in">
+          <router-view :key="$route.fullPath"></router-view>
+        </transition>
+      </v-content>
+    </template>
+    <template v-else>
+      <v-content class="fill-height">
+        <login></login>
+      </v-content>
+    </template>
   </v-app>
 </template>
 

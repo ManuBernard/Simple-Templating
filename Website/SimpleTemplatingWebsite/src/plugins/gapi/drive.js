@@ -1,5 +1,4 @@
 export function createNewProject(payload, callback) {
-  console.log(payload);
   let data = {
     folderRoot: null,
     database: null,
@@ -96,7 +95,6 @@ export function duplicateFile(payload, callback) {
 
 export function filePicker(type, callback) {
   function cb(data) {
-    console.log(data);
     callback(data.docs[0]);
   }
 

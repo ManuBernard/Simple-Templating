@@ -1,5 +1,9 @@
 <template>
-  <v-card class="flex d-flex flex-column px-4 py-4" flat color="transparent">
+  <v-card
+    class="flex d-flex flex-column px-4 py-4 py-md-4"
+    flat
+    color="transparent"
+  >
     <template v-if="file">
       <v-card-title class="justify-center">
         <a target="_blank" :href="url">
@@ -19,7 +23,9 @@
 
       <v-card-actions class="justify-center">
         <v-spacer></v-spacer>
-        <v-btn text color="white" @click="$emit('select')">Change file </v-btn>
+        <v-btn text color="secondary lighten-4" @click="$emit('select')"
+          >Pick another file
+        </v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </template>

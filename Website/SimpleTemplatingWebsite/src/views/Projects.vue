@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <template v-if="projects.length">
-      <h1 class="display-2 mt-5 mb-10">Your projects</h1>
+      <h1 class="display-2 mb-5">Your projects</h1>
 
       <v-row>
         <v-col

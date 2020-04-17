@@ -1,7 +1,7 @@
 <template>
   <div v-if="project">
     <v-container fluid>
-      <h1 class="display-2 mt-5 mb-10">
+      <h1 class="display-2 mb-5">
         <span class="font-weight-thin">The</span> {{ project.name }}
         <span class="font-weight-thin">project</span>
 
@@ -9,37 +9,40 @@
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
       </h1>
-      <v-card color="secondary" class="elevation-5 py-5">
-        <v-row class="mb-2" justify="center" align="center">
-          <v-col class="flex d-flex flex-column ">
-            <project-file-picker
-              :type="'database'"
-              :file="project.database"
-              @select="selectDatabase"
-            ></project-file-picker>
-          </v-col>
+      <v-card color="secondary" class="elevation-5 py-2 py-md-5">
+        <v-container>
+          <v-row class="mb-2" justify="center" align="center">
+            <v-col>
+              <project-file-picker
+                :type="'database'"
+                :file="project.database"
+                @select="selectDatabase"
+              ></project-file-picker>
+            </v-col>
 
-          <v-col
-            cols="12"
-            sm="3"
-            lg="2"
-            class="text-center d-none d-md-flex justify-center"
-          >
-            <v-icon color="secondary lighten-1" class="display-4"
-              >mdi-plus</v-icon
+            <v-col
+              cols="12"
+              sm="3"
+              lg="2"
+              class="text-center d-none d-md-flex justify-center"
             >
-          </v-col>
+              <v-icon color="secondary lighten-1" class="display-4"
+                >mdi-plus</v-icon
+              >
+            </v-col>
 
-          <v-col class=" flex d-flex flex-column ">
-            <project-file-picker
-              :type="'template'"
-              :file="project.template"
-              @select="selectTemplate"
-            ></project-file-picker>
-          </v-col>
-        </v-row>
+            <v-col>
+              <project-file-picker
+                :type="'template'"
+                :file="project.template"
+                @select="selectTemplate"
+              ></project-file-picker>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card>
-      <v-card flat color="transparent" class="text-center mt-n8 ">
+
+      <v-card flat color="transparent" class="text-center mt-n6 mb-5 mb-sm-0">
         <v-btn
           color="primary text-center center elevation-10"
           x-large
@@ -91,7 +94,7 @@
         color="transparent"
         flat
         max-width="500"
-        class="float-right mb-10"
+        class="float-right mt-3 mb-10"
       >
         <template v-if="!remove">
           <v-btn outlined tile color="error" @click="remove = true">
