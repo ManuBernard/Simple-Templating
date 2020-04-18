@@ -3,10 +3,12 @@ import {
   filePicker,
   duplicateFile,
   createFile,
-  createNewProject
+  createNewProject,
 } from "./drive";
 import { readDatabase } from "./spreadsheets";
 import { templetify } from "./presentations";
+import { newProject } from "./newproject";
+
 const api = {
   install(Vue) {
     Vue.prototype.$gapi = {
@@ -23,10 +25,10 @@ const api = {
       createFile: createFile,
       duplicateFile: duplicateFile,
       readDatabase: readDatabase,
-      createNewProject: createNewProject,
-      templetify: templetify
+      newProject: newProject,
+      templetify: templetify,
     };
-  }
+  },
 };
 
 export default api;

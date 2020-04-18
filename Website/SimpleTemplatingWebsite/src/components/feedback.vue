@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container style="display: none">
     <v-card dark fluid color="secondary">
       <v-card-text>
         <v-row>
