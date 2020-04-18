@@ -11,24 +11,38 @@
         <v-card
           flat
           color="transparent"
-          max-width="400"
+          max-width="500"
           class="mx-auto text-center"
         >
-          <h1 class="simpletemplatingtitle">Simple Templating</h1>
+          <h1
+            style="font-size: 4rem"
+            class="simpletemplatingtitle mb-10 pb-10"
+          >Simple Templating</h1>
 
           <v-img
             @click="signin"
             :src="require('../assets/signin.png')"
-            class="mt-3 mb-10"
+            class="mx-10 mt-3 mb-5 btn"
             contain
           />
-          <a href="https://simpletemplating.com">Simple templating</a> -
-          <a href="https://simpletemplating.com/privacypolicy">Privacy Policy</a>
-          -
-          <a href="https://simpletemplating.com/contact">Contact</a>
+          <p class="body-1">Sign in with your Google Account and start templating!</p>
+
         </v-card>
       </v-col>
     </v-row>
+    <v-footer
+      fixed
+      bottom
+      dark
+      color="secondary darken-2"
+    >
+      <a href="https://simpletemplating.com">Simple templating</a> -
+      <a href="https://simpletemplating.com/privacy-policy">Privacy Policy</a> -
+
+      <a href="https://simpletemplating.com/terms-of-service/">Terms of service</a>
+      -
+      <a href="https://simpletemplating.com/contact">Contact</a>
+    </v-footer>
   </v-container>
 </template>
 

@@ -119,20 +119,16 @@
         </v-menu>
       </v-app-bar>
       <v-content>
-        <v-container fluid>
-          <transition
-            name="fade"
-            mode="out-in"
-          >
-
-            <router-view :key="$route.fullPath"></router-view>
-          </transition>
-        </v-container>
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <router-view :key="$route.fullPath"></router-view>
+        </transition>
       </v-content>
     </template>
     <template v-else>
       <v-content class="fill-height">
-
         <login></login>
       </v-content>
     </template>
