@@ -2,22 +2,11 @@
   <v-container fluid>
     <h1 class="display-2 mb-5">New project</h1>
 
-    <v-form
-      ref="form"
-      v-model="valid"
-      @submit.prevent="add"
-    >
-      <v-card
-        dark
-        color="secondary darken-5"
-        flat
-      >
+    <v-form ref="form" v-model="valid" @submit.prevent="add">
+      <v-card dark color="secondary darken-5" flat>
         <v-card-text class="py-5 px-5 py-md-10 px-md-10">
           <v-row>
-            <v-col
-              cols="12"
-              sm="6"
-            >
+            <v-col cols="12" sm="6">
               <v-text-field
                 outlined
                 color="backgroud-white"
@@ -30,10 +19,12 @@
               ></v-text-field>
             </v-col>
             <v-col class="pt-0 pb-10 pt-sm-2 pb-sm-2">
-              <div v-if="
+              <div
+                v-if="
                   selectedProjectTemplate &&
                     selectedProjectTemplate.database_id == 'blank'
-                ">
+                "
+              >
                 Starting from a blank project, you will have to choose an
                 existing database, template, and export folder. No file nor
                 folder will be created.
@@ -41,19 +32,13 @@
               <div v-else>
                 <div v-if="!folderRoot">
                   Project will be created at your Drive's root.<br />
-                  <a
-                    color="primary"
-                    @click.prevent="selectFolder"
-                  >
+                  <a color="primary" @click.prevent="selectFolder">
                     Change location
                   </a>
                 </div>
                 <div v-else>
                   Output folder : {{ folderRoot.name }}
-                  <a
-                    color="primary"
-                    @click.prevent="selectFolder"
-                  >
+                  <a color="primary" @click.prevent="selectFolder">
                     Change folder
                   </a>
                 </div>
@@ -63,18 +48,14 @@
         </v-card-text>
       </v-card>
 
-      <v-card
-        flat
-        color="transparent"
-        class="text-center mt-n6 "
-      >
+      <v-card flat color="transparent" class="text-center mt-n6 ">
         <v-btn
           color="primary text-center center elevation-10"
           x-large
           rounded
           type="submit"
           :disabled="!valid"
-        >Create project <v-icon class="ml-2">mdi-plus</v-icon>
+          >Create project <v-icon class="ml-2">mdi-plus</v-icon>
         </v-btn>
       </v-card>
 
@@ -98,7 +79,8 @@
             @click="selectedProjectTemplate = projectTemplate"
           >
             <v-card-title class="headline mb-1">
-              {{ projectTemplate.name }}</v-card-title>
+              {{ projectTemplate.name }}</v-card-title
+            >
             <v-card-text class="subtitle-1">{{
               projectTemplate.description
             }}</v-card-text>
@@ -114,15 +96,8 @@
       ></v-text-field>
     </v-form>
 
-    <v-overlay
-      primary
-      alpha="1"
-      v-if="loading"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-      ></v-progress-circular>
+    <v-overlay primary opacity="0.8" v-if="loading" z-index="9999">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
   </v-container>
 </template>
@@ -132,12 +107,12 @@ import { v4 as uuidv4 } from "uuid";
 
 export default {
   computed: {
-    projectTemplates: function () {
+    projectTemplates: function() {
       return this.$store.getters["config/templates"];
     },
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       projectname: null,
@@ -156,44 +131,46 @@ export default {
     };
   },
 
-  mounted () {
+  mounted() {
     var self = this;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
       self.selectedProjectTemplate = self.projectTemplates[0];
     }, 100);
   },
 
   methods: {
-    selectFolder () {
+    selectFolder() {
       const self = this;
       this.$gapi.filePicker("FOLDERS", cb);
-      function cb (data) {
+      function cb(data) {
         self.folderRoot = data;
       }
     },
 
-    add () {
+    add() {
       const self = this;
-      self.loading = true;
-      var payload = {
-        name: this.projectname,
-        projectTemplate: this.selectedProjectTemplate,
-      };
+      if (!self.loading) {
+        self.loading = true;
+        var payload = {
+          name: this.projectname,
+          projectTemplate: this.selectedProjectTemplate,
+        };
 
-      if (self.folderRoot) {
-        payload.parent = self.folderRoot;
-      }
+        if (self.folderRoot) {
+          payload.parent = self.folderRoot;
+        }
 
-      if (this.selectedProjectTemplate.database_id == "blank") {
-        this.saveBlankProject();
-      } else {
-        this.$gapi.newProject(payload, function (data) {
-          self.saveProject(data);
-        });
+        if (this.selectedProjectTemplate.database_id == "blank") {
+          this.saveBlankProject();
+        } else {
+          this.$gapi.newProject(payload, function(data) {
+            self.saveProject(data);
+          });
+        }
       }
     },
 
-    saveProject (data) {
+    saveProject(data) {
       const self = this;
       const payload = {
         name: self.projectname,
@@ -201,7 +178,7 @@ export default {
         template: data.template,
         folderExport: data.folderExport,
         project: data.folderRoot,
-        callback: function () {
+        callback: function() {
           self.redirect(data.folderRoot.id);
         },
       };
@@ -209,7 +186,7 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    saveBlankProject () {
+    saveBlankProject() {
       const self = this;
       const projectId = uuidv4();
       const payload = {
@@ -220,7 +197,7 @@ export default {
         project: {
           id: projectId,
         },
-        callback: function () {
+        callback: function() {
           self.redirect(projectId);
         },
       };
@@ -228,7 +205,7 @@ export default {
       this.$store.dispatch("projects/create", payload);
     },
 
-    redirect (id) {
+    redirect(id) {
       this.projectname = "";
       this.$router.push("/project/" + id);
     },

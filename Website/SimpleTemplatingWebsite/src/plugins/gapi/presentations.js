@@ -14,7 +14,7 @@ export function templetify(p, count, c) {
     {
       fileId: project.template.id,
       name: project.name + " #" + count,
-      parent: project.folder.id
+      parent: project.folder.id,
     },
     function(data) {
       newfile = data;
@@ -28,7 +28,7 @@ function createSlides(data) {
 
   window.gapi.client.slides.presentations
     .get({
-      presentationId: newfile.id
+      presentationId: newfile.id,
     })
     .then(function(response) {
       var requests = [];
@@ -50,8 +50,8 @@ function createSlides(data) {
           var dpr = {
             duplicateObject: {
               objectId: response.result.slides[modelId].objectId,
-              objectIds: {}
-            }
+              objectIds: {},
+            },
           };
 
           dpr.duplicateObject.objectIds[
@@ -63,8 +63,8 @@ function createSlides(data) {
           requests.push({
             updateSlidesPosition: {
               slideObjectIds: ["slide_" + countindex + "_line_" + linecount],
-              insertionIndex: countindex + response.result.slides.length
-            }
+              insertionIndex: countindex + response.result.slides.length,
+            },
           });
 
           countindex++;
@@ -75,17 +75,17 @@ function createSlides(data) {
       for (var i = 0; i < response.result.slides.length; i++) {
         requests.push({
           deleteObject: {
-            objectId: response.result.slides[i].objectId
-          }
+            objectId: response.result.slides[i].objectId,
+          },
         });
       }
 
       window.gapi.client.slides.presentations
         .batchUpdate({
           presentationId: newfile.id,
-          requests: requests
+          requests: requests,
         })
-        .then(createSlideResponse => {
+        .then((createSlideResponse) => {
           replaceContent();
         });
     });
@@ -94,7 +94,7 @@ function createSlides(data) {
 function replaceContent() {
   window.gapi.client.slides.presentations
     .get({
-      presentationId: newfile.id
+      presentationId: newfile.id,
     })
 
     .then(function(response) {
@@ -111,51 +111,60 @@ function replaceContent() {
       window.gapi.client.slides.presentations
         .batchUpdate({
           presentationId: newfile.id,
-          requests: requests
+          requests: requests,
         })
-        .then(createSlideResponse => {
+        .then((createSlideResponse) => {
           callback(newfile);
         });
     });
 }
 
 function replaceText(slide, requests) {
-  for (let [key, value] of Object.entries(slide.line)) {
-    requests.push({
-      replaceAllText: {
-        replaceText: value,
-        pageObjectIds: [slide.objectId],
-        containsText: {
-          text: "{{" + key + "}}",
-          matchCase: false
-        }
-      }
-    });
+  var hastext = false;
+  slide.pageElements.forEach((element) => {
+    if (element.shape && element.shape.text) hastext = true;
+  });
+
+  if (hastext) {
+    for (let [key, value] of Object.entries(slide.line)) {
+      requests.push({
+        replaceAllText: {
+          replaceText: value,
+          pageObjectIds: [slide.objectId],
+          containsText: {
+            text: "{{" + key + "}}",
+            matchCase: false,
+          },
+        },
+      });
+    }
   }
   return requests;
 }
 
 function replaceColors(slide, requests) {
-  slide.pageElements.forEach(element => {
+  slide.pageElements.forEach((element) => {
     if (element.description) {
       var commands = parseDescription(element.description);
-      commands.forEach(command => {
-        var color = parseColor(slide.line[command.value]);
-        if (slide.line[command.value] && color) {
-          if (command.key == "background-color" && element.shape) {
-            requests.push(backgroundColor(element, color));
-          }
+      commands.forEach((command) => {
+        if (slide.line[command.value]) {
+          var color = parseColor(slide.line[command.value]);
+          if (slide.line[command.value] && color) {
+            if (command.key == "background-color" && element.shape) {
+              requests.push(backgroundColor(element, color));
+            }
 
-          if (command.key == "border-color" && element.shape) {
-            requests.push(borderColor(element, color));
-          }
+            if (command.key == "border-color" && element.shape) {
+              requests.push(borderColor(element, color));
+            }
 
-          if (command.key == "text-color" && element.shape) {
-            requests.push(textColor(element, color));
-          }
+            if (command.key == "text-color" && element.shape) {
+              requests.push(textColor(element, color));
+            }
 
-          if (command.key == "line-color" && element.line) {
-            requests.push(lineColor(element, color));
+            if (command.key == "line-color" && element.line) {
+              requests.push(lineColor(element, color));
+            }
           }
         }
       });
@@ -166,10 +175,10 @@ function replaceColors(slide, requests) {
 }
 
 function replaceImages(slide, requests) {
-  slide.pageElements.forEach(element => {
+  slide.pageElements.forEach((element) => {
     if (element.description) {
       var commands = parseDescription(element.description);
-      commands.forEach(command => {
+      commands.forEach((command) => {
         if (slide.line[command.value]) {
           if (command.key == "image" && element.image) {
             var imageRequest = replaceImage(element, slide.line[command.value]);
@@ -193,10 +202,10 @@ function backgroundColor(element, color) {
         "shapeBackgroundFill.solidFill.color, shapeBackgroundFill.solidFill.alpha",
       shapeProperties: {
         shapeBackgroundFill: {
-          solidFill: color
-        }
-      }
-    }
+          solidFill: color,
+        },
+      },
+    },
   };
 }
 
@@ -209,11 +218,11 @@ function borderColor(element, color) {
       shapeProperties: {
         outline: {
           outlineFill: {
-            solidFill: color
-          }
-        }
-      }
-    }
+            solidFill: color,
+          },
+        },
+      },
+    },
   };
 }
 
@@ -224,10 +233,10 @@ function lineColor(element, color) {
       fields: "lineFill.solidFill.color",
       lineProperties: {
         lineFill: {
-          solidFill: color
-        }
-      }
-    }
+          solidFill: color,
+        },
+      },
+    },
   };
 }
 
@@ -240,14 +249,14 @@ function replaceImage(element, image) {
     return {
       replaceImage: {
         imageObjectId: element.objectId,
-        url: image
-      }
+        url: image,
+      },
     };
   } else {
     return {
       deleteObject: {
-        objectId: element.objectId
-      }
+        objectId: element.objectId,
+      },
     };
   }
 }
@@ -260,11 +269,11 @@ function textColor(element, color) {
       style: {
         foregroundColor: {
           opaqueColor: {
-            rgbColor: color.color.rgbColor
-          }
-        }
-      }
-    }
+            rgbColor: color.color.rgbColor,
+          },
+        },
+      },
+    },
   };
 }
 
@@ -276,7 +285,7 @@ function parseDescription(description) {
     if (instructionSplitted[0] && instructionSplitted[1]) {
       var commandline = {
         key: instructionSplitted[0].trim().replace(" ", ""),
-        value: instructionSplitted[1].trim().replace(" ", "")
+        value: instructionSplitted[1].trim().replace(" ", ""),
       };
       commands.push(commandline);
     }
@@ -293,7 +302,7 @@ function parseColor(color) {
     validateColor = {
       red: color.split(",")[0],
       blue: color.split(",")[1],
-      green: color.split(",")[2]
+      green: color.split(",")[2],
     };
 
     if (color.split(",").length == 4) {
@@ -307,10 +316,10 @@ function parseColor(color) {
         rgbColor: {
           red: validateColor.red / 256,
           blue: validateColor.blue / 256,
-          green: validateColor.green / 256
-        }
+          green: validateColor.green / 256,
+        },
       },
-      alpha: parseFloat(1)
+      alpha: parseFloat(alpha),
     };
   } else {
     return false;
@@ -323,7 +332,7 @@ function hexToRgb(hex) {
     ? {
         red: parseInt(result[1], 16),
         green: parseInt(result[2], 16),
-        blue: parseInt(result[3], 16)
+        blue: parseInt(result[3], 16),
       }
     : null;
 }

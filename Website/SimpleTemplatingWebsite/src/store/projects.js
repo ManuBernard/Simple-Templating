@@ -92,7 +92,6 @@ const actions = {
 
   // Folder
   addFolder: function({ rootGetters }, payload) {
-    console.log(payload);
     firebase.db
       .collection("users")
       .doc(rootGetters["user/user"].id)

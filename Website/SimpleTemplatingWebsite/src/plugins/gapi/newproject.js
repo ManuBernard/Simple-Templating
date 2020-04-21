@@ -1,5 +1,5 @@
 import { initDb } from "./initdb";
-import { createFile } from "./drive";
+import { createFile, duplicateFile } from "./drive";
 import { initTemplate } from "./initTemplate";
 
 let finish_cb;
@@ -34,38 +34,39 @@ export function newProject(pl, callback) {
     returnedData.folderRoot = fldr;
 
     // Ccreate DB
-    createFile(
+    duplicateFile(
       {
         name: payload.name + " - Database",
-        type: "spreadsheet",
+        //   type: "spreadsheet",
+        fileId: payload.projectTemplate.database_id,
         parent: returnedData.folderRoot.id,
       },
       function(db) {
         returnedData.database = db;
 
-        var pld = {
-          source_database: payload.projectTemplate.database_id,
-          destination_database: db.id,
-        };
+        // var pld = {
+        //   source_database: payload.projectTemplate.database_id,
+        //   destination_database: db.id,
+        // };
 
-        initDb(pld);
+        // initDb(pld);
 
         // Ccreate template
-        createFile(
+        duplicateFile(
           {
             name: payload.name + " - Template",
-            type: "presentation",
+            fileId: payload.projectTemplate.template_id,
             parent: returnedData.folderRoot.id,
           },
           function(tmpl) {
             returnedData.template = tmpl;
 
-            var plt = {
-              source_template: payload.projectTemplate.template_id,
-              destination_template: tmpl.id,
-            };
+            // var plt = {
+            //   source_template: payload.projectTemplate.template_id,
+            //   destination_template: tmpl.id,
+            // };
 
-            initTemplate(plt);
+            // initTemplate(plt);
 
             // Ccreate Export folder
             createFile(

@@ -1,13 +1,13 @@
 export function readDatabase(id, callback) {
   getDatabase(id, "Database", function(data) {
-    console.log(data);
     callback(getJsonArrayFromData(data.result.values));
   });
 }
 
-export function getDatabase(id, callback) {
+export function getDatabase(id, range, callback) {
   let payload = {
     spreadsheetId: id,
+    range: range,
   };
 
   window.gapi.client.sheets.spreadsheets.values
