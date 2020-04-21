@@ -1,7 +1,17 @@
 export function readDatabase(id, callback) {
-  getDatabase(id, "Database", function(data) {
-    callback(getJsonArrayFromData(data.result.values));
-  });
+  window.gapi.client.sheets.spreadsheets
+    .get({ spreadsheetId: id })
+    .then(function(sheetsresponse) {
+      let range = sheetsresponse.result.sheets[0].properties.title;
+      sheetsresponse.result.sheets.forEach((sheet) => {
+        if (sheet.properties.title.toLowerCase().trim() == "database") {
+          range = sheet.properties.title;
+        }
+      });
+      getDatabase(id, range, function(data) {
+        callback(getJsonArrayFromData(data.result.values));
+      });
+    });
 }
 
 export function getDatabase(id, range, callback) {
