@@ -39,22 +39,22 @@
           <a
             class="white--text legal"
             target="_blank"
-            href="https://simpletemplating.com/privacy-policy/"
+            href="https://simpletemplating.com/privacy-policy"
             >Privacy policy</a
           >
           &nbsp;
 
-          <a
-            class="white--text legal"
-            target="_blank"
-            href="https://simpletemplating.com/contact/"
-            >Contact</a
-          >
-
-          <span class="body-2 mt-1 font-weight-thin">
-            &copy;{{ new Date().getFullYear() }} {{ APP_NAME }} V{{
-              APP_VERSION
-            }}
+          <span class="body-2 mt-1">
+            <span class="font-weight-thin">
+              &copy;{{ new Date().getFullYear() }}
+            </span>
+            <a
+              class="white--text legal"
+              target="_blank"
+              href="https://simpletemplating.com/"
+              >Simple Templating</a
+            >
+            <span class="font-weight-thin"> V {{ APP_VERSION }} </span>
           </span>
         </v-footer>
       </v-navigation-drawer>
@@ -177,9 +177,10 @@ export default {
 
 .legal {
   text-decoration: none;
+  opacity: 0.5;
 
   &:hover {
-    text-decoration: underline;
+    opacity: 1;
   }
 }
 </style>
