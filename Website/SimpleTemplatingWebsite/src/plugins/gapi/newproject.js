@@ -34,11 +34,11 @@ export function newProject(pl, callback) {
     returnedData.folderRoot = fldr;
 
     // Ccreate DB
-    duplicateFile(
+    createFile(
       {
         name: payload.name + " - Database",
-        //   type: "spreadsheet",
-        fileId: payload.projectTemplate.database_id,
+        type: "spreadsheet",
+        //fileId: payload.projectTemplate.database_id,
         parent: returnedData.folderRoot.id,
       },
       function(db) {
@@ -52,10 +52,11 @@ export function newProject(pl, callback) {
         // initDb(pld);
 
         // Ccreate template
-        duplicateFile(
+        createFile(
           {
             name: payload.name + " - Template",
-            fileId: payload.projectTemplate.template_id,
+            type: "presentation",
+            // fileId: payload.projectTemplate.template_id,
             parent: returnedData.folderRoot.id,
           },
           function(tmpl) {

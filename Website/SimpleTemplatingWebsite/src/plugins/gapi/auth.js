@@ -10,13 +10,12 @@ var DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
   "https://sheets.googleapis.com/$discovery/rest?version=v4",
   "https://slides.googleapis.com/$discovery/rest?version=v1",
-  "https://docs.googleapis.com/$discovery/rest?version=v1",
 ];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 var SCOPES =
-  "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations https://www.googleapis.com/auth/documents";
+  "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations";
 
 /**
  *  On load, called to load the auth2 library and API client library.

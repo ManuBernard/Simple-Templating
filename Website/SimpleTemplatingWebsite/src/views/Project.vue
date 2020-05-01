@@ -5,13 +5,25 @@
         <span class="font-weight-thin">The</span> {{ project.name }}
         <span class="font-weight-thin">project</span>
 
-        <v-btn icon class="ml-5" color="primary" @click.stop="showRenamer">
+        <v-btn
+          icon
+          class="ml-5"
+          color="primary"
+          @click.stop="showRenamer"
+        >
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
       </h1>
-      <v-card color="secondary" class="elevation-5 py-2 py-md-5">
+      <v-card
+        color="secondary"
+        class="elevation-5 py-2 py-md-5"
+      >
         <v-container>
-          <v-row class="mb-2" justify="center" align="center">
+          <v-row
+            class="mb-2"
+            justify="center"
+            align="center"
+          >
             <v-col>
               <project-file-picker
                 :type="'database'"
@@ -26,9 +38,10 @@
               lg="2"
               class="text-center d-none d-md-flex justify-center"
             >
-              <v-icon color="secondary lighten-1" class="display-4"
-                >mdi-plus</v-icon
-              >
+              <v-icon
+                color="secondary lighten-1"
+                class="display-4"
+              >mdi-plus</v-icon>
             </v-col>
 
             <v-col>
@@ -42,22 +55,28 @@
         </v-container>
       </v-card>
 
-      <v-card flat color="transparent" class="text-center mt-n6 mb-5 mb-sm-0">
+      <v-card
+        flat
+        color="transparent"
+        class="text-center mt-n6 mb-5 mb-sm-0"
+      >
         <v-btn
           color="primary text-center center elevation-10"
           x-large
           rounded
           :disabled="!validTempletify"
           @click="templetify"
-          >Templetify <v-icon class="ml-2">mdi-auto-fix</v-icon>
+        >Templetify <v-icon class="ml-2">mdi-auto-fix</v-icon>
         </v-btn>
       </v-card>
 
-      <v-toolbar color="transparent" flat class="">
+      <v-toolbar
+        color="transparent"
+        flat
+        class=""
+      >
         <template v-if="project.folder">
-          <v-btn icon color="primary" @click="selectFolder">
-            <v-icon>mdi-settings</v-icon>
-          </v-btn>
+
           Output folder:
           <v-btn
             text
@@ -71,7 +90,12 @@
             {{ project.folder.name }}
           </v-btn>
         </template>
-        <v-btn color="primary" outlined @click="selectFolder" v-else>
+        <v-btn
+          color="primary"
+          outlined
+          @click="selectFolder"
+          v-else
+        >
           <v-icon class="mr-3">mdi-settings</v-icon> Select export folder
         </v-btn>
       </v-toolbar>
@@ -84,8 +108,12 @@
         :items-per-page="5"
       >
         <template v-slot:item.link="{ item }">
-          <v-btn outlined target="_blank" color="primary" :href="item.link"
-            >View
+          <v-btn
+            outlined
+            target="_blank"
+            color="primary"
+            :href="item.link"
+          >View
           </v-btn>
         </template>
       </v-data-table>
@@ -97,7 +125,12 @@
         class="float-right mt-3 mb-10"
       >
         <template v-if="!remove">
-          <v-btn outlined tile color="error" @click="remove = true">
+          <v-btn
+            outlined
+            tile
+            color="error"
+            @click="remove = true"
+          >
             Remove project
           </v-btn>
         </template>
@@ -111,10 +144,19 @@
           >
             Cancel
           </v-btn>
-          <v-btn outlined tile color="error" @click="removeProject">
+          <v-btn
+            outlined
+            tile
+            color="error"
+            @click="removeProject"
+          >
             Confirm remove project
           </v-btn>
-          <v-card flat color="transparent" class="text-right mt-2 body-1">
+          <v-card
+            flat
+            color="transparent"
+            class="text-right mt-2 body-1"
+          >
             Files from your Google Drive will not be deleted.
           </v-card>
         </template>
@@ -128,7 +170,10 @@
       v-if="loading"
       z-index="9999"
     >
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
     </v-overlay>
 
     <v-overlay
@@ -144,17 +189,32 @@
         {{ lastGenerated.name }} has been generated
       </h2>
 
-      <v-btn @click="openLastGenerated" x-large class="mr-4">
+      <v-btn
+        @click="openLastGenerated"
+        x-large
+        class="mr-4"
+      >
         Open it
       </v-btn>
-      <v-btn @click="lastGenerated = null" fab text x-large>
+      <v-btn
+        @click="lastGenerated = null"
+        fab
+        text
+        x-large
+      >
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-overlay>
 
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>
+        <v-card-title
+          class="headline grey lighten-2"
+          primary-title
+        >
           Rename project
         </v-card-title>
 
@@ -180,7 +240,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="secondary" text @click="dialog = false">
+          <v-btn
+            color="secondary"
+            text
+            @click="dialog = false"
+          >
             Close
           </v-btn>
           <v-btn
@@ -202,11 +266,11 @@ var moment = require("moment");
 
 export default {
   computed: {
-    project() {
+    project () {
       return this.$store.getters["projects/byId"](this.$route.params.id);
     },
 
-    validTempletify() {
+    validTempletify () {
       let v = true;
       if (!this.project.template) v = false;
       if (!this.project.database) v = false;
@@ -214,10 +278,10 @@ export default {
       return v;
     },
 
-    exports() {
+    exports () {
       return this.$store.getters["exports/exports"];
     },
-    formatedExports() {
+    formatedExports () {
       var ret = [];
 
       this.exports.forEach((exp) => {
@@ -231,7 +295,7 @@ export default {
     },
   },
 
-  data() {
+  data () {
     return {
       moment: moment,
       remove: false,
@@ -258,12 +322,12 @@ export default {
   },
 
   methods: {
-    showRenamer() {
+    showRenamer () {
       this.dialog = true;
       this.projectname = this.project.name;
     },
 
-    savename() {
+    savename () {
       this.dialog = false;
       this.$store.dispatch("projects/update", {
         id: this.project.id,
@@ -271,19 +335,19 @@ export default {
       });
     },
 
-    templetify() {
+    templetify () {
       var self = this;
       this.loading = true;
 
-      this.$gapi.templetify(this.project, self.exports.length + 1, function(
+      this.$gapi.templetify(this.project, self.exports.length + 1, function (
         data
       ) {
         data.project = self.project;
-        data.callback = function(exportFile) {
+        data.callback = function (exportFile) {
           var sound = require("../assets/success.mp3");
           var audio = new Audio(sound);
           audio.play();
-          window.setTimeout(function() {
+          window.setTimeout(function () {
             self.loading = false;
             self.lastGenerated = exportFile;
           }, 1000);
@@ -292,18 +356,18 @@ export default {
       });
     },
 
-    openLastGenerated: function() {
+    openLastGenerated: function () {
       window.open(
         "https://docs.google.com/presentation/d/" +
-          this.lastGenerated.id +
-          "/edit"
+        this.lastGenerated.id +
+        "/edit"
       );
       this.lastGenerated = null;
     },
 
-    selectDatabase() {
+    selectDatabase () {
       var self = this;
-      this.$gapi.filePicker("SPREADSHEETS", function(database) {
+      this.$gapi.filePicker("SPREADSHEETS", function (database) {
         var payload = {
           project: self.project,
           database: {
@@ -316,39 +380,44 @@ export default {
       });
     },
 
-    selectTemplate() {
+    selectTemplate () {
       var self = this;
-      this.$gapi.filePicker("PRESENTATIONS", cb);
 
-      function cb(data) {
+      this.$gapi.filePicker("PRESENTATIONS", function (template) {
         var payload = {
           project: self.project,
-          template: data,
+          template: {
+            id: template.id,
+            name: template.name,
+          },
         };
 
         self.$store.dispatch("projects/addTemplate", payload);
-      }
+      });
     },
 
-    selectFolder() {
+    selectFolder () {
       var self = this;
-      this.$gapi.filePicker("FOLDERS", cb);
 
-      function cb(data) {
+      this.$gapi.filePicker("FOLDERS", function (folder) {
         var payload = {
           project: self.project,
-          folderExport: data,
+          folderExport: {
+            id: folder.id,
+            name: folder.name,
+          },
         };
 
         self.$store.dispatch("projects/addFolder", payload);
-      }
+      });
+
     },
-    removeProject() {
+    removeProject () {
       this.$store.dispatch("projects/remove", this.project);
       this.$router.push("/");
     },
   },
-  mounted() {
+  mounted () {
     this.$store.dispatch("exports/bind", this.$route.params.id);
   },
 };

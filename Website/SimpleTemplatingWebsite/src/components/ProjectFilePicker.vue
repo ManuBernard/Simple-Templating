@@ -6,7 +6,10 @@
   >
     <template v-if="file">
       <v-card-title class="justify-center">
-        <a target="_blank" :href="url">
+        <a
+          target="_blank"
+          :href="url"
+        >
           <v-img
             contain
             :src="require('../assets/' + icon + '.png')"
@@ -16,17 +19,22 @@
       </v-card-title>
 
       <v-card-title class="headline justify-center">
-        <v-btn outlined target="_blank" color="white" :href="url">
+        <v-btn
+          outlined
+          target="_blank"
+          color="white"
+          :href="url"
+        >
           {{ file.name }}
         </v-btn>
       </v-card-title>
 
       <v-card-actions class="justify-center">
         <v-spacer></v-spacer>
-        <v-btn text color="secondary lighten-4" @click="$emit('select')"
+        <!-- <v-btn text color="secondary lighten-4" @click="$emit('select')"
           >Pick another file
         </v-btn>
-        <v-spacer></v-spacer>
+        <v-spacer></v-spacer> -->
       </v-card-actions>
     </template>
     <template v-else>
@@ -39,8 +47,10 @@
         />
       </v-card-title>
       <v-card-actions class="justify-center">
-        <v-btn color="primary" @click="$emit('select')"
-          >Select {{ type }}
+        <v-btn
+          color="primary"
+          @click="$emit('select')"
+        >Select {{ type }}
         </v-btn>
       </v-card-actions>
     </template>
@@ -58,7 +68,7 @@ export default {
     },
   },
   computed: {
-    url() {
+    url () {
       let url;
       if (this.type == "template") {
         url =
@@ -69,7 +79,7 @@ export default {
       }
       return url;
     },
-    icon() {
+    icon () {
       let icon;
       if (this.type == "template") {
         icon = "slides";

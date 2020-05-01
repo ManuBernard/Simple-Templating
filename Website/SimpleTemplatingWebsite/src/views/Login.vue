@@ -1,6 +1,12 @@
 <template>
-  <v-container class="fill-height" fluid>
-    <v-row justify="center" align="center">
+  <v-container
+    class="fill-height"
+    fluid
+  >
+    <v-row
+      justify="center"
+      align="center"
+    >
       <v-col>
         <v-card
           flat
@@ -8,7 +14,10 @@
           max-width="500"
           class="mx-auto text-center"
         >
-          <h1 style="font-size: 4rem" class="simpletemplatingtitle mb-10 pb-10">
+          <h1
+            style="font-size: 4rem"
+            class="simpletemplatingtitle mb-10 pb-10"
+          >
             Simple Templating
           </h1>
 
@@ -21,11 +30,20 @@
           <p class="body-1">
             Sign in with your Google Account and start templating!
           </p>
+          <v-btn @click="signinFireBase">Sign in with firebase</v-btn>
         </v-card>
       </v-col>
     </v-row>
-    <v-footer fixed bottom dark color="secondary">
-      <v-row justify="left" no-gutters>
+    <v-footer
+      fixed
+      bottom
+      dark
+      color="secondary"
+    >
+      <v-row
+        justify="left"
+        no-gutters
+      >
         <v-btn
           href="https://simpletemplating.com"
           color="white"
@@ -70,21 +88,41 @@
 </template>
 
 <script>
+const firebase = require("@/firebaseConfig.js");
+
+
 export default {
-  data: function() {
+  data: function () {
     return {
       APP_VERSION: process.env.VUE_APP_VERSION,
     };
   },
   computed: {
-    user() {
+    user () {
       return this.$store.getters["user/user"];
     },
   },
   methods: {
-    signin() {
+    signin () {
       this.$gapi.signin();
     },
+    signinFireBase () {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+      firebase.auth().signInWithRedirect(provider);
+      firebase.auth().getRedirectResult().then(function (result) {
+        if (result.credential) {
+          var token = result.credential.accessToken;
+          console.log(token)
+        }
+
+        var user = result.user;
+      }).catch(function (error) {
+
+
+      });
+    }
   },
 };
 </script>
