@@ -30,7 +30,7 @@
           <p class="body-1">
             Sign in with your Google Account and start templating!
           </p>
-          <v-btn @click="signinFireBase">Sign in with firebase</v-btn>
+
         </v-card>
       </v-col>
     </v-row>
@@ -105,23 +105,6 @@ export default {
   methods: {
     signin () {
       this.$gapi.signin();
-    },
-    signinFireBase () {
-      var provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-
-      firebase.auth().signInWithRedirect(provider);
-      firebase.auth().getRedirectResult().then(function (result) {
-        if (result.credential) {
-          var token = result.credential.accessToken;
-          console.log(token)
-        }
-
-        var user = result.user;
-      }).catch(function (error) {
-
-
-      });
     }
   },
 };

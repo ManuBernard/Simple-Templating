@@ -1,4 +1,4 @@
-import handleClientLoad from "./auth";
+import { signIn, signOut, onSignIn } from "./auth";
 import {
   filePicker,
   duplicateFile,
@@ -13,13 +13,13 @@ const api = {
   install(Vue) {
     Vue.prototype.$gapi = {
       init: function(cb) {
-        handleClientLoad(cb);
+        onSignIn(cb);
       },
       signin: function() {
-        window.gapi.auth2.getAuthInstance().signIn();
+        signIn();
       },
       signout: function() {
-        window.gapi.auth2.getAuthInstance().signOut();
+        signOut();
       },
       filePicker: filePicker,
       createFile: createFile,

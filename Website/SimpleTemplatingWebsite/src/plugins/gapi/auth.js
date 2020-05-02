@@ -1,4 +1,5 @@
 import store from "@/store/store";
+const firebase = require("@/firebaseConfig.js");
 let onSignInCallback = null;
 
 // Client ID and API key from the Developer Console
@@ -17,67 +18,52 @@ var DISCOVERY_DOCS = [
 var SCOPES =
   "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations";
 
-/**
- *  On load, called to load the auth2 library and API client library.
- */
-function handleClientLoad(callback) {
-  onSignInCallback = callback;
-  window.gapi.load("client:auth2", initClient);
-  window.gapi.load("picker");
+export function signIn() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope(SCOPES);
+  firebase.auth().signInWithRedirect(provider);
 }
 
-// handleClientLoad();
+export function onSignIn(cb) {
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      store.dispatch("user/signin", {
+        id: user.uid,
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL,
+      });
+      cb();
+    } else {
+      // No user is signed in.
+      store.dispatch("user/signout");
+    }
+  });
 
-/**
- *  Initializes the API client library and sets up sign-in state
- *  listeners.
- */
-function initClient() {
-  window.gapi.client
-    .init({
-      apiKey: API_KEY,
-      clientId: CLIENT_ID,
-      discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES,
+  // firebase
+  //   .auth()
+  //   .getRedirectResult()
+  //   .then(function(result) {
+  //     if (result.user) {
+  //       store.dispatch("user/signin", {
+  //         id: result.user.uid,
+  //         name: result.user.displayName,
+  //         email: result.user.email,
+  //         image: result.user.photoURL,
+  //       });
+  //     }
+  //   })
+  //   .catch(function(error) {});
+}
+
+export function signOut() {
+  firebase
+    .auth()
+    .signOut()
+    .then(function() {
+      // Sign-out successful.
     })
-    .then(
-      function() {
-        window.gapi.auth2
-          .getAuthInstance()
-          .isSignedIn.listen(updateSigninStatus);
-
-        // Handle the initial sign-in state.
-        updateSigninStatus(
-          window.gapi.auth2.getAuthInstance().isSignedIn.get()
-        );
-      },
-      function(error) {}
-    );
-}
-
-/**
- *  Called when the signed in status changes, to update the UI
- *  appropriately. After a sign-in, the API is called.
- */
-function updateSigninStatus(isSignedIn) {
-  if (isSignedIn) {
-    var profile = window.gapi.auth2
-      .getAuthInstance()
-      .currentUser.get()
-      .getBasicProfile();
-
-    store.dispatch("user/signin", {
-      id: profile.getId(),
-      name: profile.getName(),
-      email: profile.getEmail(),
-      image: profile.getImageUrl(),
+    .catch(function(error) {
+      // An error happened.
     });
-
-    onSignInCallback();
-  } else {
-    store.dispatch("user/signout", {});
-    onSignInCallback();
-  }
 }
-
-export default handleClientLoad;
