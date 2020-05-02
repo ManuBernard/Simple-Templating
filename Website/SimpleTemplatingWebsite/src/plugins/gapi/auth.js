@@ -4,7 +4,6 @@ let onSignInCallback = null;
 
 // Client ID and API key from the Developer Console
 var CLIENT_ID = process.env.VUE_APP_CLIENT_ID;
-var API_KEY = process.env.VUE_APP_API_KEY;
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = [
@@ -54,7 +53,7 @@ function handleIsSignedIn(isSignedIn) {
 export function init(cb) {
   onSignInCallback = cb;
 
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     window.gapi.load("client:auth2", () => {
       resolve();
     });
