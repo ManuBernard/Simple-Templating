@@ -20,9 +20,5 @@ export function initTemplate(template) {
     ],
   };
 
-  window.gapi.client.slides.presentations
-    .batchUpdate(requests)
-    .then((response) => {
-      console.log(response);
-    });
+  window.gapi.client.slides.presentations.batchUpdate(requests).then(() => {});
 }

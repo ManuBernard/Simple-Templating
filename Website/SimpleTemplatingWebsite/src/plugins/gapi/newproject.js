@@ -1,11 +1,8 @@
 import { initDb } from "./initdb";
-import { createFile, duplicateFile } from "./drive";
+import { createFile } from "./drive";
 import { initTemplate } from "./initTemplate";
 
 let finish_cb;
-let error_cb = function(error) {
-  console.log(error.result.error.message);
-};
 
 let payload;
 

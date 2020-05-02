@@ -85,7 +85,7 @@ function createSlides(data) {
           presentationId: newfile.id,
           requests: requests,
         })
-        .then((createSlideResponse) => {
+        .then(() => {
           replaceContent();
         });
     });
@@ -99,7 +99,7 @@ function replaceContent() {
 
     .then(function(response) {
       var requests = [];
-      response.result.slides.forEach((slide, index) => {
+      response.result.slides.forEach((slide) => {
         var lineIndex = parseInt(slide.objectId.split("_line_")[1]);
         slide.line = sheetdata[lineIndex];
 
@@ -113,7 +113,7 @@ function replaceContent() {
           presentationId: newfile.id,
           requests: requests,
         })
-        .then((createSlideResponse) => {
+        .then(() => {
           callback(newfile);
         });
     });
