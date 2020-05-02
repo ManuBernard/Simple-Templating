@@ -19,51 +19,71 @@ var SCOPES =
   "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/presentations";
 
 export function signIn() {
-  var provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope(SCOPES);
-  firebase.auth().signInWithRedirect(provider);
+  const auth2 = window.gapi.auth2.getAuthInstance();
+
+  auth2.signIn();
 }
 
-export function onSignIn(cb) {
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      store.dispatch("user/signin", {
-        id: user.uid,
-        name: user.displayName,
-        email: user.email,
-        image: user.photoURL,
-      });
-      cb();
-    } else {
-      // No user is signed in.
-      store.dispatch("user/signout");
-    }
-  });
+function handleIsSignedIn(isSignedIn) {
+  if (isSignedIn) {
+    const auth2 = window.gapi.auth2.getAuthInstance();
+    const currentUser = auth2.currentUser.get();
 
-  // firebase
-  //   .auth()
-  //   .getRedirectResult()
-  //   .then(function(result) {
-  //     if (result.user) {
-  //       store.dispatch("user/signin", {
-  //         id: result.user.uid,
-  //         name: result.user.displayName,
-  //         email: result.user.email,
-  //         image: result.user.photoURL,
-  //       });
-  //     }
-  //   })
-  //   .catch(function(error) {});
+    const authResponse = currentUser.getAuthResponse(true);
+    const credential = firebase.auth.GoogleAuthProvider.credential(
+      authResponse.id_token,
+      authResponse.access_token
+    );
+    firebase
+      .auth()
+      .signInWithCredential(credential)
+      .then(({ user }) => {
+        store.dispatch("user/signin", {
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+          image: user.photoURL,
+        });
+      });
+    onSignInCallback();
+  } else {
+    onSignInCallback();
+  }
+}
+
+export function init(cb) {
+  onSignInCallback = cb;
+
+  new Promise((resolve, reject) => {
+    window.gapi.load("client:auth2", () => {
+      resolve();
+    });
+  })
+    .then(() => {
+      return window.gapi.client.init({
+        apiKey: process.env.VUE_APP_apiKey,
+        clientId: CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+      });
+    })
+    .then(() => {})
+    .then(() => {
+      const auth2 = window.gapi.auth2.getAuthInstance();
+      auth2.isSignedIn.listen(handleIsSignedIn);
+      handleIsSignedIn(auth2.isSignedIn.get());
+    });
+  // window.gapi.load("client:auth2", initClient);
+  window.gapi.load("picker");
 }
 
 export function signOut() {
-  firebase
-    .auth()
+  const auth2 = window.gapi.auth2.getAuthInstance();
+  auth2
     .signOut()
-    .then(function() {
-      // Sign-out successful.
-    })
-    .catch(function(error) {
-      // An error happened.
+
+    .then(() => {
+      store.dispatch("user/signout");
+      return firebase.auth().signOut();
     });
 }

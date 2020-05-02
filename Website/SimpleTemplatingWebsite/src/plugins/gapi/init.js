@@ -1,4 +1,4 @@
-import { signIn, signOut, onSignIn } from "./auth";
+import { signIn, signOut, init } from "./auth";
 import {
   filePicker,
   duplicateFile,
@@ -13,7 +13,7 @@ const api = {
   install(Vue) {
     Vue.prototype.$gapi = {
       init: function(cb) {
-        onSignIn(cb);
+        init(cb);
       },
       signin: function() {
         signIn();
