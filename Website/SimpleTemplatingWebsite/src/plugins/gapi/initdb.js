@@ -7,70 +7,25 @@ let error_cb = function(error) {
 let payload;
 
 /* 1 initialize : copy the sheet "database" from projecttemplate database to freshly created database */
-export function initDb(pl, callback) {
-  payload = pl;
-  finish_cb = callback;
-
-  const params = {
-    spreadsheetId: payload.source_database,
-    sheetId: 0,
+export function initDb(db) {
+  var values = [
+    ["title", "description"],
+    ["Hello", "you"],
+    ["welcome", "to"],
+    ["Simple", "Templating"],
+  ];
+  var body = {
+    values: values,
   };
-
-  const copySheetToAnotherSpreadsheetRequestBody = {
-    destinationSpreadsheetId: payload.destination_database,
-  };
-
-  const request = window.gapi.client.sheets.spreadsheets.sheets.copyTo(
-    params,
-    copySheetToAnotherSpreadsheetRequestBody
-  );
-
-  request.then(initDb_deletFirstSheet, error_cb);
-}
-
-/* 2 delete "Sheet 1" */
-function initDb_deletFirstSheet(response) {
-  var request = window.gapi.client.sheets.spreadsheets.batchUpdate({
-    spreadsheetId: payload.destination_database,
-    requests: [
-      {
-        deleteSheet: {
-          sheetId: 0,
-        },
-      },
-    ],
-  });
-
-  request.then(initDb_listSheets, error_cb);
-}
-
-/* 3 Retrieve copied sheet ID */
-function initDb_listSheets(response) {
-  window.gapi.client.sheets.spreadsheets
-    .get({
-      spreadsheetId: payload.destination_database,
+  window.gapi.client.sheets.spreadsheets.values
+    .update({
+      spreadsheetId: db.id,
+      range: "Sheet1",
+      valueInputOption: "RAW",
+      resource: body,
     })
-    .then(initDb_renameCopyedSheet, error_cb);
-}
-
-/* 4 Rename properly */
-function initDb_renameCopyedSheet(response) {
-  window.gapi.client.sheets.spreadsheets
-    .batchUpdate({
-      spreadsheetId: payload.destination_database,
-      requests: [
-        {
-          updateSheetProperties: {
-            properties: {
-              title: "database",
-              sheetId: response.result.sheets[0].properties.sheetId,
-            },
-            fields: "title",
-          },
-        },
-      ],
-    })
-    .then(function(response) {
-      if (finish_cb) finish_cb(response);
-    }, error_cb);
+    .then((response) => {
+      var result = response.result;
+      console.log(`${result.updatedCells} cells updated.`);
+    });
 }

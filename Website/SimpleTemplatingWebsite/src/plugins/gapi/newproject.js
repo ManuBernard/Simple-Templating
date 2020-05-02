@@ -38,20 +38,14 @@ export function newProject(pl, callback) {
       {
         name: payload.name + " - Database",
         type: "spreadsheet",
-        //fileId: payload.projectTemplate.database_id,
         parent: returnedData.folderRoot.id,
       },
       function(db) {
         returnedData.database = db;
 
-        // var pld = {
-        //   source_database: payload.projectTemplate.database_id,
-        //   destination_database: db.id,
-        // };
+        // Add sample values
+        initDb(db);
 
-        // initDb(pld);
-
-        // Ccreate template
         createFile(
           {
             name: payload.name + " - Template",
@@ -67,7 +61,7 @@ export function newProject(pl, callback) {
             //   destination_template: tmpl.id,
             // };
 
-            // initTemplate(plt);
+            initTemplate(tmpl);
 
             // Ccreate Export folder
             createFile(
